@@ -1,11 +1,11 @@
 <template>
   <v-card class="rounded-lg mt-3">
     <v-card-title class="font-weight-bold">
-      Friends
+      {{ $t('profile.Friends') }}
       <v-card-subtitle>{{ user.friends_count }} friends</v-card-subtitle>
       <v-spacer></v-spacer>
       <v-btn text class="primary--text text-capitalize">
-        More
+        {{ $t('profile.More') }}
       </v-btn>
     </v-card-title>
     <v-container class="mt-n10">
@@ -13,17 +13,34 @@
         <v-col
           v-for="friend in user.friends"
           :key="`friend-${friend.friend_id}`"
+          cols="3"
+          class="text-center"
         >
-          <v-card width="93" class="rounded-lg">
-            <v-img
-              width="93"
-              :src="friend.user_friend.profile_photo_path"
-            ></v-img>
-          </v-card>
-          {{ friend.user_friend.name }}
+          <router-link
+            :to="{
+              name: 'MainProfile',
+              params: { url: friend.user_friend.url }
+            }"
+          >
+            <v-avatar size="93" class="rounded-lg avatar-outlined">
+              <v-img
+                width="93"
+                :src="friend.user_friend.profile_photo_path"
+              ></v-img>
+            </v-avatar>
+          </router-link>
+          <router-link
+            :to="{
+              name: 'MainProfile',
+              params: { url: friend.user_friend.url }
+            }"
+            style="text-decoration: none; color: black;"
+            class="font-weight-bold"
+          >
+            {{ friend.user_friend.name }}
+          </router-link>
         </v-col>
       </v-row>
-      {{ user }}
     </v-container>
   </v-card>
 </template>

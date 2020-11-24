@@ -111,6 +111,7 @@
             v-on="on"
             active-class="primary--text light-blue lighten-5"
             height="32"
+            elevation="0"
           >
             <v-avatar size="30" class="avatar-button">
               <img :src="currentUser.profile_photo_path" />
