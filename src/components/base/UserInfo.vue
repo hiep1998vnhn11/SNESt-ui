@@ -73,6 +73,7 @@
             <div class="font-weight-bold mt-5 mb-3">
               Jobs
             </div>
+            {{ user.info.jobs }}
             <v-switch
               v-for="job in user.info.jobs"
               :key="job.workspace + job.details"
@@ -390,7 +391,7 @@ export default {
   },
   data() {
     return {
-      dialog: true,
+      dialog: false,
       warningDialog: false,
       test: true,
       jobs: [],

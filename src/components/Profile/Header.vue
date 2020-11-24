@@ -114,7 +114,7 @@
           active-class="primary--text"
           exact
         >
-          Main profile
+          {{ $t('profile.Posts') }}
         </v-btn>
         <v-btn
           large
@@ -123,7 +123,7 @@
           :to="{ name: 'AboutProfile' }"
           active-class="primary--text"
         >
-          introduce
+          {{ $t('profile.About') }}
         </v-btn>
         <v-btn
           large
@@ -132,7 +132,7 @@
           :to="{ name: 'FriendProfile' }"
           active-class="primary--text"
         >
-          friends
+          {{ $t('profile.Friends') }}
         </v-btn>
 
         <button-show-more></button-show-more>
@@ -141,7 +141,7 @@
 
         <v-btn v-if="current" outlined class="text-capitalize mt-3 ml-2" text>
           <v-icon class="mr-2">mdi-pencil</v-icon>
-          Edit your profile
+          {{ $t('profile.EditProfile') }}
         </v-btn>
         <v-btn
           :loading="loadingAddFriend"
@@ -153,7 +153,7 @@
           @click="onAddFriend"
         >
           <v-icon class="mr-2">mdi-account-plus</v-icon>
-          Add friend
+          {{ $t('profile.AddFriend') }}
         </v-btn>
         <v-btn
           :loading="loadingAddFriend"

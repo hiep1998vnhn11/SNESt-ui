@@ -6,7 +6,7 @@
     active-class="primary--text"
     @click="expand = !expand"
   >
-    more
+    {{ $t('profile.More') }}
     <v-icon>mdi-menu-down</v-icon>
     <div class="show-more">
       <v-expand-transition>
@@ -16,11 +16,10 @@
             closeConditional
           }"
           v-show="expand"
-          height="320"
           width="250"
           class="mx-auto index-100"
         >
-          <v-container>
+          <div class="ma-1">
             <v-btn
               :to="{ name: 'ImageProfile' }"
               text
@@ -28,7 +27,7 @@
               block
               active-class="primary--text"
             >
-              Image
+              {{ $t('profile.Image') }}
               <v-spacer />
             </v-btn>
             <v-btn
@@ -38,7 +37,7 @@
               block
               active-class="primary--text"
             >
-              Video
+              {{ $t('profile.Videos') }}
               <v-spacer />
             </v-btn>
             <v-btn
@@ -48,26 +47,20 @@
               block
               active-class="primary--text"
             >
-              Archive
+              {{ $t('profile.Archive') }}
               <v-spacer />
             </v-btn>
-            <v-btn text class="text-capitalize mb-2" block>
-              Hello
+            <v-btn
+              :to="{ name: 'ArchiveProfile' }"
+              text
+              class="text-capitalize mb-2"
+              block
+              active-class="primary--text"
+            >
+              {{ $t('profile.CheckIns') }}
               <v-spacer />
             </v-btn>
-            <v-btn text class="text-capitalize mb-2" block>
-              Hello
-              <v-spacer />
-            </v-btn>
-            <v-btn text class="text-capitalize mb-2" block>
-              Hello
-              <v-spacer />
-            </v-btn>
-            <v-btn text class="text-capitalize mb-2" block>
-              Hello
-              <v-spacer />
-            </v-btn>
-          </v-container>
+          </div>
         </v-card>
       </v-expand-transition>
     </div>
