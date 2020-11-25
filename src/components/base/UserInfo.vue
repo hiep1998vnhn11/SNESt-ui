@@ -2,23 +2,36 @@
   <v-card class="rounded-lg mt-3">
     <v-container>
       <div class="font-weight-black text-body-1">
-        Introduce
+        {{ $t('profile.Intro') }}
       </div>
-      <div>
+      <div v-if="user.info.jobs.length">
         <v-icon>mdi-bag-checked</v-icon>
-        Chức vụ
+        {{ $t('profile.Work') }}
+        <span>
+          {{ user.info.jobs[0].details }}
+          at
+          {{ user.info.jobs[0].workspace }}
+        </span>
       </div>
-      <div>
+      <div v-if="user.info.educates.length">
         <v-icon>mdi-book-open-variant</v-icon>
-        Học vấn
+        {{ $t('profile.WentTo') }}
+        <span>
+          {{ user.info.educates[0].details }}
+          at
+          {{ user.info.educates[0].school }}
+        </span>
       </div>
-      <div>
+      <div v-if="user.info.show_live_at">
         <v-icon>mdi-home-map-marker</v-icon>
-        Sống tại Địa chỉ(Thành phố)
+        {{ $t('profile.LivesIn') }}
+        <span class="primary--text">
+          {{ user.info.live_at }}
+        </span>
       </div>
-      <div>
+      <div v-if="user.info.show_from">
         <v-icon>mdi-map-marker</v-icon>
-        Đến từ
+        <span>{{ $t('profile.From') }}</span>
       </div>
       <div v-if="current">
         <v-btn

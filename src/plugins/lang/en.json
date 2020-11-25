@@ -184,7 +184,11 @@
     "UseFiltersCaption": "This will not affect how others see your timeline.",
     "PostFilters": "Post Filters",
     "GoTo": "Go to:",
-    "Privacy": "Privacy"
+    "Privacy": "Privacy",
+    "Intro": "Intro",
+    "WentTo": "Went to",
+    "LivesIn": "Lives in",
+    "From": "From"
   },
   "month": {
     "1": "January",

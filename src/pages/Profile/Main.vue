@@ -134,12 +134,12 @@ export default {
   props: ['user'],
   data() {
     return {
-      loading: true,
+      loading: false,
       error: null,
       posts: null,
       observer: null,
       page: 1,
-      filterDialog: true,
+      filterDialog: false,
       year: null,
       years: Array.from(
         { length: 30 },
