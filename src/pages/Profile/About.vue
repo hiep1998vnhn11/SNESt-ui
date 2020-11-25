@@ -23,7 +23,13 @@
         </v-tooltip>
       </v-card-title>
       <v-toolbar color="elevation-0" class="red" dense>
-        ad
+        <v-tabs v-model="tab" align-with-title>
+          <v-tabs-slider color="yellow"></v-tabs-slider>
+
+          <v-tab v-for="item in items" :key="item">
+            {{ item }}
+          </v-tab>
+        </v-tabs>
       </v-toolbar>
 
       <v-container>
@@ -81,11 +87,7 @@
 export default {
   props: ['user'],
   data() {
-    return {
-      friendPrivacyDialog: false,
-      loadingFriendPrivacy: false,
-      changeFriendPrivacy: false
-    }
+    return {}
   }
 }
 </script>
