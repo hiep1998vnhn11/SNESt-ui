@@ -3,7 +3,7 @@
     <router-link
       :to="{
         name: 'MainProfile',
-        params: { url: user.url }
+        params: { url: user.url },
       }"
       class="text-capitalize"
       v-slot="{ href, navigate }"
@@ -38,11 +38,11 @@
             </div>
             <v-list-item-title class="mb-1">
               <v-icon>mdi-account-multiple</v-icon>
-              {{ info.friends_count }} Friends
+              {{ info.friends_count }} {{ $t('Friends') }}
             </v-list-item-title>
             <v-list-item-title>
               <v-icon>mdi-account-circle</v-icon>
-              Infomation
+              {{ $t('Infomation') }}
             </v-list-item-title>
             <v-list-item-subtitle>
               <span v-if="info.info.live_at && info.info.show_live_at">
@@ -67,7 +67,7 @@
         <v-card-actions v-show="currentUser.id !== user.id">
           <v-btn class="text-capitalize" width="56%" outlined text>
             <v-icon>mdi-account-plus</v-icon>
-            Addfriend
+            {{ $t('AddFriend') }}
           </v-btn>
           <v-btn class="text-capitalize" outlined text>
             <v-icon>mdi-facebook-messenger</v-icon>

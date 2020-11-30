@@ -24,14 +24,14 @@
             <v-text-field
               v-model="email"
               :rules="emailRules"
-              label="E-mail"
+              :label="$t('Email')"
               required
             ></v-text-field>
             <v-text-field
               v-model="password"
               type="password"
               :rules="passwordRules"
-              label="Password"
+              :label="$t('Password')"
               required
             ></v-text-field>
             <v-btn
@@ -69,21 +69,23 @@ export default {
     'login-footer': LoginFooter,
     'register-component': RegisterComponent
   },
-  data: () => ({
-    valid: true,
-    email: null,
-    password: null,
-    emailRules: [
-      v => !!v || 'E-mail is required!',
-      v => /.+@.+/.test(v) || 'E-mail must be valid'
-    ],
-    passwordRules: [v => !!v || 'Password is required!'],
-    registerSuccess: false,
-    loading: false,
-    error: null,
-    loginError: false
-  }),
-
+  data() {
+    const _this = this
+    return {
+      valid: true,
+      email: null,
+      password: null,
+      emailRules: [
+        v => !!v || _this.$t('Rule.EmailRequired'),
+        v => /.+@.+/.test(v) || _this.$t('Rule.EmailNotValid')
+      ],
+      passwordRules: [v => !!v || _this.$t('Rule.PasswordRequired')],
+      registerSuccess: false,
+      loading: false,
+      error: null,
+      loginError: false
+    }
+  },
   computed: mapGetters('user', ['isLoggedIn']),
 
   methods: {

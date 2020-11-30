@@ -22,25 +22,24 @@
       </v-card-title>
       <v-divider class="mx-4"></v-divider>
       <v-container>
-        {{ error }}
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-text-field
             v-model="email"
             :rules="emailRules"
-            label="E-mail"
+            :label="$t('Email')"
             required
           ></v-text-field>
           <v-text-field
             v-model="name"
             :rules="nameRules"
-            label="Your name"
+            :label="$t('Name')"
             required
           ></v-text-field>
           <v-text-field
             v-model="password"
             type="password"
             :rules="passwordRules"
-            label="Password"
+            :label="$t('Password')"
             required
           ></v-text-field>
           <div class="text-left">
@@ -115,6 +114,7 @@
 import axios from 'axios'
 export default {
   data() {
+    const _this = this
     return {
       loading: false,
       error: null,
@@ -131,26 +131,20 @@ export default {
       select: false,
       birthDay: new Date().toISOString().substr(0, 10),
       nameRules: [
-        v => !!v || 'Name is required!',
-        v =>
-          (!!v && v.length >= 4) ||
-          'Name too short! Name must contain more than 4 charactor!',
-        v =>
-          (!!v && v.length <= 50) ||
-          'Name too long! Name must contain less than 50 charactor!'
+        v => !!v || _this.$t('Rule.NameRequired'),
+        v => (!!v && v.length >= 4) || _this.$t('Rule.NameShort'),
+        v => (!!v && v.length <= 50) || _this.$t('Rule.NameLong')
       ],
       emailRules: [
-        v => !!v || 'E-mail is required!',
-        v => (!!v && v.length >= 5) || 'E-mail must be valid!',
-        v => (!!v && v.length <= 255) || 'Email too long!',
-        v => /.+@.+/.test(v) || 'E-mail must be valid!'
+        v => !!v || _this.$t('Rule.EmailRequired'),
+        v => (!!v && v.length >= 5) || _this.$t('Rule.EmailNotValid'),
+        v => (!!v && v.length <= 255) || _this.$t('Rule.EmailLong'),
+        v => /.+@.+/.test(v) || _this.$t('Rule.EmailNotValid')
       ],
       passwordRules: [
-        v => !!v || 'Password is required!',
-        v =>
-          (!!v && v.length >= 4) ||
-          'Password too short! Please choose other password!',
-        v => (!!v && v.length <= 255) || 'Password too long!'
+        v => !!v || _this.$t('Rule.PasswordRequired'),
+        v => (!!v && v.length >= 4) || _this.$t('Rule.PasswordShort'),
+        v => (!!v && v.length <= 255) || _this.$t('Rule.PasswordLong')
       ],
       genderRules: [v => !!v || 'Gender is required!']
     }
