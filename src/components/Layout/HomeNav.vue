@@ -56,9 +56,7 @@
           x_large
         />
         <v-divider></v-divider>
-        <v-card disabled class="mt-2 grey lighten-3">
-          Your linked
-        </v-card>
+        <v-card disabled class="mt-2 grey lighten-3"> Your linked </v-card>
       </v-list>
       <v-footer
         absolute
@@ -91,27 +89,62 @@
             <v-icon>mdi-magnify</v-icon>
           </v-btn>
         </v-card-title>
-        <base-user-button
+        <v-btn
           v-for="friend in friends"
           :key="`friend id ${friend.id}`"
-          :src="friend.user_friend.profile_photo_path"
-          :name="friend.user_friend.name"
-          avatar_outlined
-          x_large
-        />
+          x-large
+          block
+          text
+          class="rounded-md text-capitalize text-body-2 font-weight-bold"
+          @click="$emit('click')"
+        >
+          <v-badge
+            bordered
+            bottom
+            :color="friend.user_friend.onlineStatus.status ? 'green' : 'grey'"
+            dot
+            offset-x="20"
+            offset-y="10"
+          >
+            <v-avatar size="40" class="avatar-outlined ml-n3 mr-3">
+              <img :src="friend.user_friend.profile_photo_path" />
+            </v-avatar>
+          </v-badge>
+          <span>
+            {{ friend.user_friend.name }}
+          </span>
+          <v-spacer></v-spacer>
+        </v-btn>
         <v-divider />
         <v-container class="font-weight-black grey--text text--darken-2">
           {{ $t('Chat') }}
         </v-container>
-        <base-user-button
+        <v-btn
           v-for="room in rooms"
           :key="`room id ${room.id}`"
-          :src="room.user_with.profile_photo_path"
-          :name="room.user_with.name"
-          avatar_outlined
-          x_large
+          x-large
+          block
+          text
+          class="rounded-md text-capitalize text-body-2 font-weight-bold"
           @click="selectedMessage = room.id"
-        />
+        >
+          <v-badge
+            bordered
+            bottom
+            :color="room.user_with.onlineStatus.status ? 'green' : 'grey'"
+            dot
+            offset-x="20"
+            offset-y="10"
+          >
+            <v-avatar size="40" class="avatar-outlined ml-n3 mr-3">
+              <img :src="room.user_with.profile_photo_path" />
+            </v-avatar>
+          </v-badge>
+          <span>
+            {{ room.user_with.name }}
+          </span>
+          <v-spacer></v-spacer>
+        </v-btn>
         <v-divider></v-divider>
         <v-container class="font-weight-black grey--text text--darken-2">
           {{ $t('Group chat') }}

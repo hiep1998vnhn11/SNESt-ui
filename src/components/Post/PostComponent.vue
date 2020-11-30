@@ -38,42 +38,46 @@
       </v-row>
     </v-container>
     <v-row>
-      <v-tooltip top class="text-body1">
+      <v-tooltip top class="text-body-1 white">
         <template color="grey" v-slot:activator="{ on, attrs }">
-          <v-btn class="text-body1 ml-5 mt-n1" v-bind="attrs" v-on="on" icon>
-            <v-icon color="primary">mdi-heart</v-icon>
-          </v-btn>
+          <v-icon color="primary" v-bind="attrs" v-on="on" class="ml-7"
+            >mdi-heart</v-icon
+          >
         </template>
         <v-card max-width="300" class="text-body1">{{ post.likes }}</v-card>
       </v-tooltip>
-      {{ post.likes_count }}
-      {{ $t('count.likes') }}
+      <span>
+        {{ post.likes_count }}
+      </span>
       <v-spacer></v-spacer>
-      <v-icon class="mt-n2" color="primary">mdi-comment</v-icon>
-      {{ post.comments_count }}
-      <p class="mr-5">{{ $t('count.comments') }}</p>
+      <span class="mr-7">
+        {{ post.comments_count }}
+        {{ $t('count.comments') }}
+      </span>
     </v-row>
     <v-divider class="mx-4"></v-divider>
     <v-card-actions>
-      <v-col cols="6">
-        <v-btn class="text-body-1" text block @click="onLike" :ripple="false">
-          <v-icon v-if="!post.isLiked">mdi-heart-outline</v-icon>
-          <v-icon v-else color="primary">mdi-heart</v-icon>
-          <span class="text-capitalize">{{ $t('action.like') }} </span>
-        </v-btn>
-      </v-col>
-      <v-col cols="6">
-        <v-btn
-          class="text-capitalize"
-          text
-          block
-          @click="showComment = true"
-          :ripple="false"
-        >
-          <v-icon>mdi-comment-outline</v-icon>
-          {{ $t('action.comment') }}
-        </v-btn>
-      </v-col>
+      <v-row no-gutters>
+        <v-col cols="6">
+          <v-btn class="text-body-1" text block @click="onLike" :ripple="false">
+            <v-icon v-if="!post.isLiked">mdi-heart-outline</v-icon>
+            <v-icon v-else color="primary">mdi-heart</v-icon>
+            <span class="text-capitalize">{{ $t('action.like') }} </span>
+          </v-btn>
+        </v-col>
+        <v-col cols="6">
+          <v-btn
+            class="text-capitalize"
+            text
+            block
+            @click="showComment = true"
+            :ripple="false"
+          >
+            <v-icon>mdi-comment-outline</v-icon>
+            {{ $t('action.comment') }}
+          </v-btn>
+        </v-col>
+      </v-row>
     </v-card-actions>
     <post-comment
       :post_id="post.id"

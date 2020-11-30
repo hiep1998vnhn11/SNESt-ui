@@ -10,5 +10,7 @@ const opts = {
     iconfont: 'mdi' // 'mdi' || 'mdiSvg' || 'md' || 'fa' || 'fa4' || 'faSvg'
   }
 }
+const VBtn = Vue.component('VBtn')
+VBtn.options.props.ripple.default = false
 
 export default new Vuetify(opts)

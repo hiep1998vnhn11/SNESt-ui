@@ -5,7 +5,7 @@
       type="list-item-avatar, divider, actions"
     ></v-skeleton-loader>
     <v-row v-else justify="space-around">
-      <v-col cols="1">
+      <v-col cols="2" md="1">
         <v-avatar size="45" class="ml-1 avatar-outlined">
           <img :src="currentUser.profile_photo_path" :alt="currentUser.name" />
         </v-avatar>
