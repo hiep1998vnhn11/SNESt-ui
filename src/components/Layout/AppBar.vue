@@ -8,24 +8,43 @@
       ></v-skeleton-loader>
     </v-app-bar>
     <v-app-bar height="56" app v-else class="elevation-1">
-      <router-link to="/">
-        <v-avatar size="40">
-          <img src="@/assets/logo.png" />
-        </v-avatar>
-      </router-link>
-      <v-col cols="1" md="2">
-        <v-text-field
-          class="elevation-0 grey lighten-3"
-          rounded
-          hide-details
-          :label="$t('Search')"
-          v-model="searchKey"
-        >
-          <template v-slot:prepend-inner class="mr-n2">
-            <v-icon class="ml-n4">mdi-magnify</v-icon>
-          </template>
-        </v-text-field>
-      </v-col>
+      <v-card
+        width="300"
+        :class="`elevation-${searchSelected ? 5 : 0} ml-n4`"
+        style="position: absolute; top: 0px; z-index: 100"
+        v-click-outside="{
+          handler: onClickOutsideWithConditional,
+          closeConditional,
+        }"
+      >
+        <v-app-bar height="56" class="elevation-0">
+          <router-link to="/" v-if="!searchSelected">
+            <img src="@/assets/logo.png" width="40" height="40" />
+          </router-link>
+          <v-btn icon v-else @click="searchSelected = false">
+            <v-icon>mdi-arrow-left</v-icon>
+          </v-btn>
+          <v-text-field
+            class="elevation-0 grey lighten-3 ml-2"
+            rounded
+            hide-details
+            :label="$t('Search')"
+            v-model="searchKey"
+            @focus="searchSelected = true"
+          >
+            <template v-slot:prepend-inner class="mr-n2">
+              <v-icon class="ml-n4">mdi-magnify</v-icon>
+            </template>
+          </v-text-field>
+        </v-app-bar>
+        <v-container v-if="searchSelected">
+          <v-row class="mx-auto font-weight-black">
+            {{ $t('Home.SearchResult') }}
+          </v-row>
+          {{ $t('Home.SearchNoResult') }}
+        </v-container>
+      </v-card>
+      <v-card width="300"></v-card>
       <v-spacer />
       <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
@@ -172,7 +191,7 @@ export default {
         }
       ],
       searchKey: '',
-      searchClick: false,
+      searchSelected: false,
       menu: false
     }
   },
@@ -180,7 +199,13 @@ export default {
     ...mapGetters('user', ['isLoggedIn', 'currentUser'])
   },
   methods: {
-    ...mapActions('user', ['logout'])
+    ...mapActions('user', ['logout']),
+    onClickOutsideWithConditional() {
+      this.searchSelected = false
+    },
+    closeConditional(e) {
+      return this.searchSelected
+    }
   }
 }
 </script>
