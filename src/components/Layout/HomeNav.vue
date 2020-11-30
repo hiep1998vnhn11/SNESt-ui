@@ -171,6 +171,7 @@
       v-if="!!selectedMessage"
       :room-id="selectedMessage"
       @on-close="selectedMessage = null"
+      :onlineStatus="rooms[0].user_with.onlineStatus"
     />
   </div>
 </template>
@@ -220,7 +221,7 @@ export default {
     }
   },
   mounted() {
-    if (!this.friends.length || !this.rooms.length) this.fetchData()
+    setInterval(this.fetchData(), 1000 * 60 * 3)
   }
 }
 </script>

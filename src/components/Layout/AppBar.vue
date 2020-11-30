@@ -1,13 +1,6 @@
 <template>
   <div>
-    <v-app-bar height="56" app fixed v-if="loading">
-      <v-skeleton-loader
-        max-height="56"
-        width="100%"
-        type="table-row"
-      ></v-skeleton-loader>
-    </v-app-bar>
-    <v-app-bar height="56" app v-else class="elevation-1">
+    <v-app-bar height="56" app class="elevation-1 hidden-xs-only">
       <v-card
         width="300"
         :class="`elevation-${searchSelected ? 5 : 0} ml-n4`"
@@ -128,7 +121,7 @@
         <span>Group</span>
       </v-tooltip>
       <v-spacer />
-      <v-tooltip bottom>
+      <v-tooltip bottom v-if="!loading">
         <template v-slot:activator="{ on, attrs }">
           <v-btn
             :to="{ name: 'MainProfile', params: { url: currentUser.url } }"
@@ -155,7 +148,14 @@
       <notification-button />
       <setting-button />
     </v-app-bar>
-    <v-divider />
+
+    <v-app-bar height="56" app class="elevation-1 hidden-sm-and-up">
+      <v-spacer />
+      <create-button />
+      <message-button />
+      <notification-button />
+      <setting-button />
+    </v-app-bar>
   </div>
 </template>
 

@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Main from '@/pages/Main/Main'
 import Login from '@/pages/Auth/Login'
+import Test from '@/pages/Auth/test'
+
 import Home from '@/pages/Main/Home'
 import Store from '@/pages/Main/Store'
 import Watch from '@/pages/Main/Watch'
@@ -170,6 +172,11 @@ export default new Router({
       }
     },
     {
+      path: '/test',
+      name: 'Test',
+      component: Test
+    },
+    {
       path: '/post/:post_id',
       name: 'ParamPost',
       component: ParamPost
@@ -178,5 +185,6 @@ export default new Router({
       path: '*',
       redirect: '/'
     }
-  ]
+  ],
+  mode: 'history'
 })

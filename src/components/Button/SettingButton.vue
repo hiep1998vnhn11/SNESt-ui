@@ -31,9 +31,7 @@
             </v-btn>
           </v-card-title>
           <v-divider />
-          <v-container>
-            Hello
-          </v-container>
+          <v-container> Hello </v-container>
         </div>
 
         <div v-else-if="feedback">
@@ -102,9 +100,7 @@
               </v-avatar>
               <div class="text-left">
                 Have an error?
-                <div class="text-caption">
-                  Please tell us about this error
-                </div>
+                <div class="text-caption">Please tell us about this error</div>
               </div>
               <v-spacer></v-spacer>
             </v-btn>
@@ -117,7 +113,7 @@
         <v-card
           v-click-outside="{
             handler: onClickOutsideWithConditional,
-            closeConditional
+            closeConditional,
           }"
           v-show="expand"
           width="350"
@@ -132,17 +128,16 @@
               active-class="blue lighten-3"
               :to="{
                 name: 'MainProfile',
-                params: { url: currentUser.url }
+                params: { url: currentUser.url },
               }"
+              v-if="!!currentUser"
             >
               <v-avatar class="left-8 avatar-outlined" size="60">
                 <img :src="currentUser.profile_photo_path" />
               </v-avatar>
               <div class="text-left">
                 {{ currentUser.name }}
-                <div class="text-caption">
-                  Go to your profile
-                </div>
+                <div class="text-caption">Go to your profile</div>
               </div>
               <v-spacer></v-spacer>
             </v-btn>

@@ -2,6 +2,7 @@
   <v-app id="inspire">
     <v-app-bar fixed :class="classes" flat height="56" outlined>
       <v-btn @click="drawer = !drawer">Test</v-btn>
+      {{ breakPoint }}
       <v-spacer></v-spacer>
 
       <v-responsive max-width="156">
@@ -29,7 +30,15 @@
         ></v-text-field>
       </v-responsive>
     </v-app-bar>
-    <v-navigation-drawer v-model="drawer" width="350" fixed class="mt-14">
+    <v-navigation-drawer
+      v-model="drawer"
+      width="350"
+      fixed
+      class="mt-14"
+      :mini-variant="breakPoint === 'xs'"
+      mini-variant-width="80"
+      disable-resize-watcher
+    >
       <v-card-title class="font-weight-black navleft-header">
         Message
         <v-spacer />
@@ -107,10 +116,10 @@
               v-if="!drawer"
               width="70"
               height="80%"
-              class="fixed-avatar-card  mt-n10 scroll-avatar-card ml-n6"
+              class="fixed-avatar-card mt-n10 scroll-avatar-card ml-n6"
               tile
             >
-              <v-card-title class="fixed-avatar-card  white lighten-3">
+              <v-card-title class="fixed-avatar-card white lighten-3">
                 <v-btn icon class="grey lighten-2">
                   <v-icon>mdi-pencil</v-icon>
                 </v-btn>
@@ -118,9 +127,7 @@
               <v-divider></v-divider>
               <v-card-text class="mt-14">
                 hiep
-                <a v-for="n in 45" :key="`asd-${n}`">
-                  123123
-                </a>
+                <a v-for="n in 45" :key="`asd-${n}`"> 123123 </a>
                 <a>bottm</a>
               </v-card-text>
             </v-card>
@@ -163,6 +170,9 @@ export default {
     },
     classBottom() {
       return this.drawer ? 'ml-350 mr-300' : 'ml-80 mr-0'
+    },
+    breakPoint() {
+      return this.$vuetify.breakpoint.name
     }
   },
   methods: {

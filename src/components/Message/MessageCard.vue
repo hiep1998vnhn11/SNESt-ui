@@ -3,7 +3,7 @@
     class="message-card-component"
     v-click-outside="{
       handler: onClickOutsideWithConditional,
-      closeConditional
+      closeConditional,
     }"
     :ripple="false"
     @keydown.esc="test"
@@ -19,7 +19,7 @@
         offset-x="10"
         offset-y="10"
         class="ml-n2"
-        v-if="active"
+        v-if="onlineStatus.status"
       >
         <v-avatar size="40">
           <v-img :src="currentUser.profile_photo_path"></v-img>
@@ -32,7 +32,10 @@
         <div class="font-weight-bold mb-n2">
           {{ currentUser.name | onlyName }}
         </div>
-        <span class="text-caption">Active now</span>
+        <span class="text-caption" v-if="onlineStatus.status">Active now</span>
+        <span class="text-caption" v-else>
+          {{ onlineStatus | relativeTime }}
+        </span>
       </v-col>
       <v-spacer />
       <v-btn icon small class="mr-2">
@@ -84,9 +87,7 @@
         @keydown.enter.shift.exact="newLine"
       ></v-textarea>
       <v-btn icon small @click="onSendMessage">
-        <v-icon :color="selected ? 'primary' : ''">
-          mdi-send
-        </v-icon>
+        <v-icon :color="selected ? 'primary' : ''"> mdi-send </v-icon>
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -103,7 +104,7 @@ export default {
   components: {
     MessageRow
   },
-  props: ['roomId'],
+  props: ['roomId', 'onlineStatus'],
   data() {
     return {
       text: '',
