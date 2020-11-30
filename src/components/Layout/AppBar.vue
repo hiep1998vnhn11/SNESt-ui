@@ -7,17 +7,24 @@
         type="table-row"
       ></v-skeleton-loader>
     </v-app-bar>
-    <v-app-bar height="56" app v-else>
-      <v-col cols="3">
+    <v-app-bar height="56" app v-else class="elevation-1">
+      <router-link to="/">
+        <v-avatar size="40">
+          <img src="@/assets/logo.png" />
+        </v-avatar>
+      </router-link>
+      <v-col cols="1" md="2">
         <v-text-field
-          flat
-          clearable
-          solo-inverted
+          class="elevation-0 grey lighten-3"
+          rounded
           hide-details
-          prepend-inner-icon="mdi-magnify"
-          label="Search"
+          :label="$t('Search')"
           v-model="searchKey"
-        />
+        >
+          <template v-slot:prepend-inner class="mr-n2">
+            <v-icon class="ml-n4">mdi-magnify</v-icon>
+          </template>
+        </v-text-field>
       </v-col>
       <v-spacer />
       <v-tooltip bottom>
@@ -113,10 +120,12 @@
             height="32"
             elevation="0"
           >
-            <v-avatar size="30" class="avatar-button">
+            <v-avatar size="30" class="avatar-button mr-n3">
               <img :src="currentUser.profile_photo_path" />
             </v-avatar>
-            {{ currentUser.name }}
+            <span class="mr-n1">
+              {{ currentUser.name | onlyName }}
+            </span>
           </v-btn>
         </template>
         <span>{{ currentUser.name }}</span>
@@ -163,6 +172,7 @@ export default {
         }
       ],
       searchKey: '',
+      searchClick: false,
       menu: false
     }
   },

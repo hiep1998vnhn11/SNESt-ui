@@ -61,15 +61,23 @@
         class="mt-16"
       ></v-skeleton-loader>
       <v-list class="mt-13">
-        <v-list-item v-for="room in rooms" :key="`room-${room.id}`" link>
+        <v-list-item
+          v-for="room in rooms"
+          :key="`room-${room.id}`"
+          link
+          :to="{ name: 'Room', params: { room_id: room.id } }"
+          active-class="primary--text"
+        >
           <v-list-item-icon>
-            <v-avatar class="outlined">
+            <v-avatar class="avatar-outlined">
               <v-img :src="room.user_with.profile_photo_path" />
             </v-avatar>
           </v-list-item-icon>
 
           <v-list-item-content>
-            <v-list-item-title>{{ room.user_with.name }}</v-list-item-title>
+            <v-list-item-title class="font-weight-bold text-capitalize">{{
+              room.user_with.name
+            }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -83,7 +91,7 @@
       right
     >
       <v-list>
-        <v-list-item v-for="n in 5" :key="n" link>
+        <v-list-item v-for="n in 50" :key="n" link>
           <v-list-item-content>
             <v-list-item-title>Item {{ n }}</v-list-item-title>
           </v-list-item-content>
@@ -94,7 +102,7 @@
     <v-main class="grey">
       <v-container fluid>
         <v-row>
-          <v-col cols="2" md="3">
+          <v-col cols="2" md="1" class="yellow">
             <v-card
               v-if="!drawer"
               width="70"
@@ -117,9 +125,8 @@
               </v-card-text>
             </v-card>
           </v-col>
-          <v-col cols="10" md="9">
+          <v-col cols="10" md="10" class="ml-6 mt-2">
             <v-card tile class="mt-n10">
-              {{ rooms }}
               <router-view />
             </v-card>
           </v-col>

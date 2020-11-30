@@ -56,14 +56,20 @@
     <v-divider class="mx-4"></v-divider>
     <v-card-actions>
       <v-col cols="6">
-        <v-btn class="text-body-1" text block @click="onLike">
+        <v-btn class="text-body-1" text block @click="onLike" :ripple="false">
           <v-icon v-if="!post.isLiked">mdi-heart-outline</v-icon>
           <v-icon v-else color="primary">mdi-heart</v-icon>
           <span class="text-capitalize">{{ $t('action.like') }} </span>
         </v-btn>
       </v-col>
       <v-col cols="6">
-        <v-btn class="text-capitalize" text block @click="showComment = true">
+        <v-btn
+          class="text-capitalize"
+          text
+          block
+          @click="showComment = true"
+          :ripple="false"
+        >
           <v-icon>mdi-comment-outline</v-icon>
           {{ $t('action.comment') }}
         </v-btn>
@@ -77,9 +83,7 @@
     <v-dialog v-model="deleteDialog" max-width="290">
       <v-card>
         <v-card-title class="headline">Delete Post?</v-card-title>
-        <v-card-text>
-          Do you want to delete this post?
-        </v-card-text>
+        <v-card-text> Do you want to delete this post? </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="green darken-1" text @click="deleteDialog = false">
