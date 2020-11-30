@@ -39,86 +39,22 @@
       </v-card>
       <v-card width="300"></v-card>
       <v-spacer />
-      <v-tooltip bottom>
+      <v-tooltip bottom v-for="tab in tabs" :key="`tab-${tab.name}`">
         <template v-slot:activator="{ on, attrs }">
           <v-btn
             text
             x-large
-            :to="{ name: 'Home' }"
+            :to="{ name: tab.name }"
             v-bind="attrs"
             v-on="on"
             active-class="primary--text"
             class="mr-2"
             exact
           >
-            <v-icon>mdi-home</v-icon>
+            <v-icon>{{ tab.icon }}</v-icon>
           </v-btn>
         </template>
-        <span>Home</span>
-      </v-tooltip>
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            text
-            x-large
-            :to="{ name: 'Watch' }"
-            v-bind="attrs"
-            v-on="on"
-            active-class="primary--text"
-            class="mr-2"
-          >
-            <v-icon>mdi-youtube-tv</v-icon>
-          </v-btn>
-        </template>
-        <span>Watch</span>
-      </v-tooltip>
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            text
-            x-large
-            :to="{ name: 'Game' }"
-            v-bind="attrs"
-            v-on="on"
-            active-class="primary--text"
-            class="mr-2"
-          >
-            <v-icon>mdi-facebook-gaming</v-icon>
-          </v-btn>
-        </template>
-        <span>Game</span>
-      </v-tooltip>
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            text
-            x-large
-            :to="{ name: 'Store' }"
-            v-bind="attrs"
-            v-on="on"
-            active-class="primary--text"
-            class="mr-2"
-          >
-            <v-icon>mdi-storefront</v-icon>
-          </v-btn>
-        </template>
-        <span>Store</span>
-      </v-tooltip>
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            text
-            x-large
-            :to="{ name: 'Group' }"
-            v-bind="attrs"
-            v-on="on"
-            active-class="primary--text"
-            class="mr-2"
-          >
-            <v-icon>mdi-account-group</v-icon>
-          </v-btn>
-        </template>
-        <span>Group</span>
+        <span>{{ tab.text }}</span>
       </v-tooltip>
       <v-spacer />
       <v-tooltip bottom v-if="!loading">
@@ -150,6 +86,14 @@
     </v-app-bar>
 
     <v-app-bar height="56" app class="elevation-1 hidden-sm-and-up">
+      <router-link to="/">
+        <img src="@/assets/logo.png" width="30" height="30" />
+      </router-link>
+      <v-btn icon class="grey lighten-3 ml-2" large>
+        <v-icon>mdi-magnify</v-icon>
+      </v-btn>
+      <show-tab-button :tabs="tabs" />
+
       <v-spacer />
       <create-button />
       <message-button />
@@ -165,16 +109,19 @@ import CreateButton from '@/components/Button/CreateButton'
 import MessageButton from '@/components/Button/MessageButton'
 import NotificationButton from '@/components/Button/NotificationButton'
 import SettingButton from '@/components/Button/SettingButton'
+import ShowTabButton from '@/components/Button/ShowTabButton'
 
 export default {
   components: {
     'create-button': CreateButton,
     MessageButton,
     NotificationButton,
-    SettingButton
+    SettingButton,
+    ShowTabButton
   },
   props: ['loading', 'error'],
   data() {
+    const _this = this
     return {
       langs: [
         {
@@ -188,6 +135,33 @@ export default {
         {
           text: '日本語',
           value: 'ja'
+        }
+      ],
+      tabs: [
+        {
+          name: 'Home',
+          text: _this.$t('Home'),
+          icon: 'mdi-home'
+        },
+        {
+          name: 'Watch',
+          text: _this.$t('Watch'),
+          icon: 'mdi-youtube-tv'
+        },
+        {
+          name: 'Game',
+          text: _this.$t('Game'),
+          icon: 'mdi-facebook-gaming'
+        },
+        {
+          name: 'Store',
+          text: _this.$t('Store'),
+          icon: 'mdi-storefront'
+        },
+        {
+          name: 'Group',
+          text: _this.$t('Group'),
+          icon: 'mdi-account-group'
         }
       ],
       searchKey: '',
