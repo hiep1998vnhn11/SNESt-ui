@@ -5,13 +5,16 @@
         <v-btn
           width="40"
           height="40"
-          @click="expand = true"
+          @click="onClick"
           outlined
           icon
           text
           :class="`ml-2 ${classes}`"
+          :loading="loading"
         >
-          <v-icon v-bind="attrs" v-on="on">mdi-bell</v-icon>
+          <v-badge :content="numberUnread" :value="numberUnread" color="green">
+            <v-icon color="black" v-bind="attrs" v-on="on">mdi-bell</v-icon>
+          </v-badge>
         </v-btn>
       </template>
       <span>{{ $t('common.notification') }}</span>
@@ -21,25 +24,84 @@
         <v-card
           v-click-outside="{
             handler: onClickOutsideWithConditional,
-            closeConditional
+            closeConditional,
           }"
           v-show="expand"
           width="350"
           class="mx-auto"
         >
+          <v-card-title class="headline font-weight-black">
+            Notifications
+            <v-spacer />
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn small outlined icon text>
+                  <v-icon v-bind="attrs" v-on="on">mdi-dots-horizontal</v-icon>
+                </v-btn>
+              </template>
+              <span>{{ $t('NotificationSetting') }}</span>
+            </v-tooltip>
+          </v-card-title>
           <v-container>
-            <base-user-button
-              icon
-              block
-              icon_name="mdi-menu-open"
-              name="activity diary"
-            />
-            <base-user-button
-              icon
-              block
-              icon_name="mdi-account-settings"
-              name="activity diary"
-            />
+            <v-list three-line>
+              <v-list-item-group
+                active-class="pink--text"
+                multiple
+                v-model="selected"
+              >
+                <template v-for="(item, index) in notifications">
+                  <v-list-item
+                    :key="item.data.id"
+                    v-if="item.type.includes('FriendNotification')"
+                    inactive
+                  >
+                    <v-list-item-avatar size="45">
+                      <v-img :src="item.data.user.profile_photo_path"></v-img>
+                    </v-list-item-avatar>
+                    <v-list-item-content>
+                      <span class="font-weight-bold">
+                        {{ item.data.user.name }}
+                      </span>
+                      {{ $t('has just sent you a friend invitation') }}
+                      <v-row
+                        class="ma-n3"
+                        v-if="item.data.status === 'pending'"
+                      >
+                        <v-col cols="6" class="mr-n4 ml-2">
+                          <v-btn
+                            text
+                            outlined
+                            block
+                            class="light-blue accent-2 text-none"
+                            @click="onFriendAccept(index)"
+                          >
+                            {{ $t('FriendAccept') }}
+                          </v-btn>
+                        </v-col>
+                        <v-col cols="6">
+                          <v-btn
+                            text
+                            block
+                            class="text-none"
+                            outlined
+                            @click="onFriendCancel(index)"
+                          >
+                            {{ $t('FriendCancel') }}
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                      <span v-else-if="item.data.status === 'accepted'">
+                        {{ item.data.user.name }}
+                        {{ $t('and you are friend now!') }}
+                      </span>
+                      <span v-else>
+                        {{ $t('You have been refused this user!') }}
+                      </span>
+                    </v-list-item-content>
+                  </v-list-item>
+                </template>
+              </v-list-item-group>
+            </v-list>
           </v-container>
         </v-card>
       </v-expand-transition>
@@ -48,6 +110,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   methods: {
     onClickOutsideWithConditional() {
@@ -55,6 +118,39 @@ export default {
     },
     closeConditional(e) {
       return this.expand
+    },
+    async getNumberUnread() {
+      try {
+        let response = await axios.post('/v1/user/notification/number_unread')
+        this.numberUnread = response.data.data
+      } catch (err) {
+        this.error = err.response.data.message
+      }
+    },
+    async fetchData() {
+      this.loading = true
+      this.selected = [...Array(this.numberUnread).keys()]
+      this.numberUnread = 0
+      try {
+        let response = await axios.post('/v1/user/notification/get')
+        this.notifications = response.data.data.data
+      } catch (err) {
+        this.error = err.response.data.data
+      }
+      this.loading = false
+    },
+    onClick() {
+      if (!this.expand) this.fetchData()
+      this.expand = true
+    },
+    async onFriendAccept(index) {
+      console.log(this.notifications[index])
+      this.notifications[index].data.status = 'accepted'
+      // await axios.post('/v1/user/friend/123/accept')
+    },
+    async onFriendCancel(index) {
+      this.notifications[index].data.status = 'canceled'
+      await axios.post('/v1/user/friend/123/denied')
     }
   },
   computed: {
@@ -62,9 +158,17 @@ export default {
       return this.expand ? 'primary--text blue lighten-4' : null
     }
   },
+  mounted() {
+    this.getNumberUnread()
+  },
   data() {
     return {
-      expand: false
+      expand: false,
+      loading: false,
+      error: null,
+      notifications: [],
+      numberUnread: 0,
+      selected: []
     }
   }
 }

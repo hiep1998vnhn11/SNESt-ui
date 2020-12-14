@@ -215,5 +215,14 @@
     "PasswordLong": "Password too long! Please choose other password!",
     "PasswordRequired": "Password is required!",
     "PasswordNotValid": "Password must contain at least 1 numeric character, 1 uppercase character and 1 special character"
-  }
+  },
+  "Home": "Home",
+  "Watch": "Watch",
+  "Game": "Game",
+  "Store": "Store",
+  "NotificationSetting": "Setting notification",
+  "FriendCancel": "Refuse",
+  "FriendAccept": "Accept",
+  "Group": "Group",
+  "has just sent you a friend invitation": "has just sent you a friend invitation"
 }
