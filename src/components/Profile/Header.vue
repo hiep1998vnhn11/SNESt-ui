@@ -75,7 +75,7 @@
               label="Description about you"
               v-model="story"
               counter="105"
-              :rules="[v => v.length <= 105 || 'Too long']"
+              :rules="[(v) => v.length <= 105 || 'Too long']"
             />
           </v-container>
           <v-card-actions>
@@ -306,9 +306,7 @@
         <v-divider></v-divider>
 
         <v-card-actions>
-          <v-btn block class="blue--text text-capitalize">
-            More
-          </v-btn>
+          <v-btn block class="blue--text text-capitalize"> More </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -445,9 +443,7 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
-        <v-card-text>
-          Are you sure about discard this change?
-        </v-card-text>
+        <v-card-text> Are you sure about discard this change? </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
@@ -616,7 +612,7 @@ export default {
     async onCancelFriend() {
       this.loadingAddFriend = true
       try {
-        let url = `/v1/user/friend/${this.user.friend_id}/denied`
+        let url = `/v1/user/friend/${this.user.friend_id}/cancel`
         await axios.post(url)
         this.$emit('changed-status-friend-denied')
       } catch (err) {
