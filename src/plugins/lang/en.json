@@ -224,5 +224,7 @@
   "FriendCancel": "Refuse",
   "FriendAccept": "Accept",
   "Group": "Group",
-  "has just sent you a friend invitation": "has just sent you a friend invitation"
+  "has just sent you a friend invitation": "has just sent you a friend invitation",
+  "NewMessage": "New message",
+  "To:": "To:"
 }
