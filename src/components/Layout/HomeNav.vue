@@ -221,7 +221,9 @@ export default {
     }
   },
   mounted() {
-    setInterval(this.fetchData(), 1000 * 60 * 3)
+    setInterval(async function() {
+      await this.fetchData
+    }, 180000)
   }
 }
 </script>
@@ -229,5 +231,17 @@ export default {
 <style>
 .index-3 {
   z-index: 3;
+}
+
+.home-navbar-right::-webkit-scrollbar {
+  width: 0.25rem;
+}
+
+.home-navbar-right::-webkit-scrollbar-track {
+  background: white;
+}
+
+.home-navbar-right::-webkit-scrollbar-thumb {
+  background: #0077ff;
 }
 </style>

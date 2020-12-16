@@ -1,11 +1,12 @@
 <template>
   <v-card
-    class="message-card-component"
+    :class="`message-card-component message-card_${location} rounded-lg`"
     v-click-outside="{
       handler: onClickOutsideWithConditional,
       closeConditional,
     }"
     :ripple="false"
+    height="450"
     @keydown.esc="test"
     v-if="!!currentUser"
     :loading="loading"
@@ -19,22 +20,24 @@
         offset-x="10"
         offset-y="10"
         class="ml-n2"
-        v-if="onlineStatus.status"
+        v-if="user.onlineStatus.status"
       >
-        <v-avatar size="40">
-          <v-img :src="currentUser.profile_photo_path"></v-img>
+        <v-avatar size="40" class="avatar-outlined">
+          <v-img :src="user.profile_photo_path"></v-img>
         </v-avatar>
       </v-badge>
-      <v-avatar v-else size="40">
-        <v-img :src="currentUser.profile_photo_path"></v-img>
+      <v-avatar v-else size="40" class="avatar-outlined">
+        <v-img :src="user.profile_photo_path"></v-img>
       </v-avatar>
       <v-col class="mb-n1" cols="5">
         <div class="font-weight-bold mb-n2">
-          {{ currentUser.name | onlyName }}
+          {{ user.name | onlyName }}
         </div>
-        <span class="text-caption" v-if="onlineStatus.status">Active now</span>
+        <span class="text-caption" v-if="user.onlineStatus.status">
+          Active now
+        </span>
         <span class="text-caption" v-else>
-          {{ onlineStatus | relativeTime }}
+          {{ user.onlineStatus | relativeTime }}
         </span>
       </v-col>
       <v-spacer />
@@ -47,18 +50,47 @@
       <v-btn icon small class="mr-2">
         <v-icon :color="selected ? 'primary' : ''">mdi-minus</v-icon>
       </v-btn>
-      <v-btn icon small @click="$emit('on-close')">
+      <v-btn icon small @click="closeMessageCard(location)">
         <v-icon :color="selected ? 'primary' : ''">mdi-close</v-icon>
       </v-btn>
     </v-toolbar>
     <v-divider />
-    <v-card-text class="message-card-text-component" id="container">
-      <message-row
-        v-for="message in messages"
-        :key="`message-${message.id}-${message.created_at}`"
-        :message="message"
-        :active="true"
-      />
+    <v-card-text
+      class="message-card-text-component text--primary"
+      id="container"
+    >
+      {{ roomId }} {{ roomID }}
+      {{ messages }}
+      <v-container v-if="loading" class="text-center">
+        <v-progress-circular
+          :size="40"
+          :width="2"
+          color="purple"
+          indeterminate
+        ></v-progress-circular>
+      </v-container>
+      <div v-else-if="!roomId" class="text-center">
+        <div>
+          <v-avatar class="avatar-outlined" size="100">
+            <img :src="user.profile_photo_path" />
+          </v-avatar>
+        </div>
+        <div class="font-weight-bold text-body-1">
+          {{ user.name }}
+        </div>
+        <div class="text-body-2">
+          {{ $t('FriendOnMessage') }}
+        </div>
+        <div>{{ $t('Write something with') }} {{ user.name | onlyName }}</div>
+      </div>
+      <div v-else>
+        <message-row
+          v-for="message in messages"
+          :key="`message-${message.id}-${message.created_at}`"
+          :message="message"
+          :active="true"
+        />
+      </div>
     </v-card-text>
     <v-card-actions>
       <v-btn icon small>
@@ -94,57 +126,96 @@
 </template>
 
 <script>
+import Axios from 'axios'
 import { mapGetters, mapActions } from 'vuex'
 import MessageRow from './MessageRow'
+
 export default {
   computed: {
     ...mapGetters('user', ['currentUser']),
-    ...mapGetters('message', ['messages'])
+    ROOMID() {
+      return this.roomID ? this.roomID : this.roomId
+    }
   },
   components: {
     MessageRow
   },
-  props: ['roomId', 'onlineStatus'],
+  props: ['roomId', 'user', 'location'],
   data() {
     return {
       text: '',
       selected: false,
       active: true,
       loading: false,
-      error: null
+      error: null,
+      roomID: null,
+      messages: []
     }
   },
   methods: {
-    ...mapActions('message', ['getMessage', 'sendMessage']),
+    ...mapActions('message', ['getMessage', 'sendMessage', 'closeMessageCard']),
     onClickOutsideWithConditional() {
       this.selected = false
     },
     closeConditional(e) {
       return this.selected
     },
-    fetchData() {
+    async fetchData() {
+      if (!this.roomId && !this.roomID) return
       this.loading = true
+      let roomId = this.roomID ? this.roomID : this.roomId
       try {
-        this.getMessage(this.roomId)
+        let response = await Axios.get(`/v1/user/room/${roomId}/message/get`, {
+          params: {
+            page: 1
+          }
+        })
+        this.messages = response.data.data
       } catch (err) {
-        this.error = err.toString()
+        console.log(err.response.data.message)
       }
       this.loading = false
     },
     async onSendMessage() {
       if (this.text) {
         this.loading = true
-        try {
-          await this.sendMessage({
-            roomId: this.roomId,
-            content: this.text,
-            user_id: this.currentUser.id
-          })
-          this.text = ''
-        } catch (err) {
-          this.error = err.toString()
+        if (this.roomID) {
+          try {
+            await this.sendMessage({
+              roomId: this.roomID,
+              content: this.text,
+              user_id: this.currentUser.id
+            })
+            this.text = ''
+          } catch (err) {
+            this.error = err.response.data.message
+          }
+        } else if (this.roomId) {
+          try {
+            await this.sendMessage({
+              roomId: this.roomId,
+              content: this.text,
+              user_id: this.currentUser.id
+            })
+            this.text = ''
+          } catch (err) {
+            this.error = err.response.data.message
+          }
+        } else {
+          this.createNewRoom()
         }
         this.loading = false
+      }
+    },
+    async createNewRoom() {
+      try {
+        let room = await Axios.post(`/v1/user/room/${this.user.id}/create`, {
+          content: this.text
+        })
+        this.roomId = room.id
+        this.fetchData()
+      } catch (err) {
+        this.error = err.response.data.message
       }
     },
     scrollToBottom() {
@@ -174,8 +245,7 @@ export default {
   position: fixed;
   z-index: 3;
   bottom: 5px;
-  right: 5px;
-  width: 328px;
+  width: 330px;
 }
 
 .message-card-text-component {

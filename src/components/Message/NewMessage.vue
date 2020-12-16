@@ -1,6 +1,6 @@
 <template>
   <v-card
-    :class="`new-message-card-component rounded-lg ${elevation}`"
+    :class="`new-message-card-component rounded-lg ${elevation} message-card_${location}`"
     v-click-outside="{
       handler: onClickOutsideWithConditional,
       closeConditional,
@@ -8,13 +8,14 @@
     :ripple="false"
     :loading="loading"
     @click="clickCard"
+    height="450"
   >
     <v-toolbar dense color="elevation-0">
       <span class="font-weight-bold">
         {{ $t('NewMessage') }}
       </span>
       <v-spacer />
-      <v-btn icon small @click="$emit('on-close')">
+      <v-btn icon small @click="onCloseCard">
         <v-icon :color="selected ? 'primary' : ''">mdi-close</v-icon>
       </v-btn>
     </v-toolbar>
@@ -39,7 +40,15 @@
         allow-overflow
       >
         <template v-slot:activator="{ on, attrs }">
-          <v-btn block text x-large class="text-none" v-on="on" v-bind="attrs">
+          <v-btn
+            block
+            text
+            x-large
+            class="text-none"
+            v-on="on"
+            v-bind="attrs"
+            @click="$emit('click-user', friend)"
+          >
             <v-badge
               bordered
               bottom
@@ -90,6 +99,7 @@
               <v-col cols="10">
                 {{ friend.user_friend.name }}
               </v-col>
+              {{ friend.user_friend.id }}
             </v-row>
           </v-col>
         </v-row>
@@ -135,7 +145,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('message', ['getMessage', 'sendMessage']),
+    ...mapActions('message', ['getMessage', 'sendMessage', 'closeMessageCard']),
     onClickOutsideWithConditional() {
       this.selected = false
     },
@@ -151,8 +161,12 @@ export default {
     },
     clickCard() {
       this.selected = true
+    },
+    onCloseCard() {
+      this.closeMessageCard(this.location)
     }
-  }
+  },
+  props: ['location']
 }
 </script>
 
@@ -160,9 +174,8 @@ export default {
 .new-message-card-component {
   position: fixed;
   z-index: 3;
-  bottom: 15px;
-  right: 80px;
-  width: 328px;
+  bottom: 5px;
+  width: 330px;
 }
 
 .new-message-card-text-component {

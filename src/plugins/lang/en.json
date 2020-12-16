@@ -226,5 +226,7 @@
   "Group": "Group",
   "has just sent you a friend invitation": "has just sent you a friend invitation",
   "NewMessage": "New message",
-  "To:": "To:"
+  "To:": "To:",
+  "FriendOnMessage": "You're friends",
+  "Write something with": "Write something with"
 }
