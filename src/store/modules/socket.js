@@ -13,6 +13,9 @@ const actions = {
     const socket = io(process.env.VUE_APP_SOCKET_URL)
     socket.emit('login', rootState.user.currentUser.id)
     socket.emit('join', { userId: rootState.user.currentUser.id, roomId: 1 })
+    socket.on('receiptMessage', ({ userId, message }) => {
+      console.log(`received an message: ${message} from ${userId}`)
+    })
     window.socket = socket
     commit('SET_SOCKET', socket)
   },

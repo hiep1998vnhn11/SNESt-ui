@@ -221,9 +221,11 @@ export default {
     }
   },
   mounted() {
+    this.fetchData()
+    const _this = this
     setInterval(async function() {
-      await this.fetchData
-    }, 180000)
+      await _this.fetchData()
+    }, 1000 * 60 * 3)
   }
 }
 </script>

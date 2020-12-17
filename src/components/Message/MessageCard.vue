@@ -12,34 +12,37 @@
     :loading="loading"
   >
     <v-toolbar dense color="elevation-0">
-      <v-badge
-        bordered
-        bottom
-        color="deep-purple accent-4"
-        dot
-        offset-x="10"
-        offset-y="10"
-        class="ml-n2"
-        v-if="user.onlineStatus.status"
-      >
-        <v-avatar size="40" class="avatar-outlined">
+      <v-btn text large class="ml-n3 text-none">
+        <v-badge
+          bordered
+          bottom
+          color="deep-purple accent-4"
+          dot
+          offset-x="10"
+          offset-y="10"
+          class="ml-n9"
+          v-if="user.onlineStatus.status"
+        >
+          <v-avatar size="40" class="avatar-outlined">
+            <v-img :src="user.profile_photo_path"></v-img>
+          </v-avatar>
+        </v-badge>
+        <v-avatar v-else size="40" class="avatar-outlined ml-n9">
           <v-img :src="user.profile_photo_path"></v-img>
         </v-avatar>
-      </v-badge>
-      <v-avatar v-else size="40" class="avatar-outlined">
-        <v-img :src="user.profile_photo_path"></v-img>
-      </v-avatar>
-      <v-col class="mb-n1" cols="5">
-        <div class="font-weight-bold mb-n2">
-          {{ user.name | onlyName }}
-        </div>
-        <span class="text-caption" v-if="user.onlineStatus.status">
-          Active now
-        </span>
-        <span class="text-caption" v-else>
-          {{ user.onlineStatus | relativeTime }}
-        </span>
-      </v-col>
+        <v-col class="mb-n1" cols="5">
+          <div class="font-weight-bold mb-n2">
+            {{ user.name | onlyName }}
+          </div>
+          <span class="text-caption" v-if="user.onlineStatus.status">
+            Active now
+          </span>
+          <span class="text-caption" v-else>
+            {{ user.onlineStatus | relativeTime }}
+          </span>
+        </v-col>
+      </v-btn>
+
       <v-spacer />
       <v-btn icon small class="mr-2">
         <v-icon :color="selected ? 'primary' : ''">mdi-video</v-icon>
