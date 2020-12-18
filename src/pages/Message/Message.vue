@@ -63,12 +63,7 @@
       </v-card-title>
       <v-divider></v-divider>
 
-      <v-skeleton-loader
-        v-if="loading"
-        v-bind="attrs"
-        type="list-item-avatar@3"
-        class="mt-16"
-      ></v-skeleton-loader>
+      {{ threshes }}
       <v-list class="mt-13">
         <v-list-item
           v-for="room in rooms"
@@ -152,7 +147,7 @@ export default {
     'nav-bar': MessageNav
   },
   mounted() {
-    if (!this.rooms.length) this.fetchRoom()
+    if (!this.threshes.length) this.fetchThresh()
   },
   data() {
     return {
@@ -165,6 +160,7 @@ export default {
   },
   computed: {
     ...mapGetters('message', ['rooms', 'messages']),
+    ...mapGetters('thresh', ['threshes']),
     classes() {
       return this.drawer ? 'ml-350 mt-14' : 'ml-0 mt-14'
     },
@@ -177,13 +173,14 @@ export default {
   },
   methods: {
     ...mapActions('message', ['getRoom', 'getMessage']),
-    async fetchRoom() {
+    ...mapActions('thresh', ['getThreshes', 'setThreshPage']),
+    async fetchThresh() {
       this.loading = true
       this.error = null
       try {
-        await this.getRoom()
+        await this.getThreshes()
       } catch (err) {
-        this.error = err.toString()
+        this.error = err.response.data.message
       }
       this.loading = false
     }

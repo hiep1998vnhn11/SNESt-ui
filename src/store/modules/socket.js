@@ -16,6 +16,12 @@ const actions = {
     socket.on('receiptMessage', ({ userId, message }) => {
       console.log(`received an message: ${message} from ${userId}`)
     })
+    socket.on('responseAddFriend', data => {
+      commit('notification/ADD_NOTIFICATION', data, { root: true })
+    })
+    socket.on('acceptFriendNotification', data => {
+      console.log(data)
+    })
     window.socket = socket
     commit('SET_SOCKET', socket)
   },

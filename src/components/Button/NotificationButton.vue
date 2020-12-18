@@ -111,31 +111,32 @@
 
 <script>
 import axios from 'axios'
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   methods: {
+    ...mapActions('notification', ['getNotifications', 'getNumberUnread']),
     onClickOutsideWithConditional() {
       this.expand = false
     },
     closeConditional(e) {
       return this.expand
     },
-    async getNumberUnread() {
+    async fetchUnread() {
       try {
-        let response = await axios.post('/v1/user/notification/number_unread')
-        this.numberUnread = response.data.data
+        await this.getNumberUnread()
       } catch (err) {
         this.error = err.response.data.message
       }
     },
     async fetchData() {
+      if (this.notifications.length !== 0) return
       this.loading = true
       this.selected = [...Array(this.numberUnread).keys()]
-      this.numberUnread = 0
       try {
-        let response = await axios.post('/v1/user/notification/get')
-        this.notifications = response.data.data.data
+        await this.getNotifications()
       } catch (err) {
-        this.error = err.response.data.data
+        this.error = err.response.data.message
       }
       this.loading = false
     },
@@ -144,9 +145,13 @@ export default {
       this.expand = true
     },
     async onFriendAccept(index) {
-      console.log(this.notifications[index])
       this.notifications[index].data.status = 'accepted'
-      // await axios.post('/v1/user/friend/123/accept')
+      // const response = await axios.post(`/v1/user/friend/${this.notifications[index].id}/accept`)
+      const response = 'hello'
+      this.socket.emit('acceptFriend', {
+        userId: this.notifications[index].data.user.id,
+        response: response
+      })
     },
     async onFriendCancel(index) {
       this.notifications[index].data.status = 'canceled'
@@ -156,18 +161,18 @@ export default {
   computed: {
     classes() {
       return this.expand ? 'primary--text blue lighten-4' : null
-    }
+    },
+    ...mapGetters('notification', ['notifications', 'numberUnread']),
+    ...mapGetters('socket', ['socket'])
   },
   mounted() {
-    this.getNumberUnread()
+    this.fetchUnread()
   },
   data() {
     return {
       expand: false,
       loading: false,
       error: null,
-      notifications: [],
-      numberUnread: 0,
       selected: []
     }
   }
