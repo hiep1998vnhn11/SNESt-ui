@@ -18,13 +18,13 @@ const actions = {
     commit('SET_ROOM', response.data.data)
   },
   async getMessage({ commit, state }, roomId) {
-    const url = `/v1/user/room/${roomId}/message/get`
+    const url = `/v1/user/thresh/${roomId}/message/get`
     const response = await axios.get(url, {
       params: {
         page: state.pageMessage
       }
     })
-    const messages = response.data.data
+    const messages = response.data.data.data
     if (messages && messages.length) {
       commit('SET_MESSAGE', messages)
     }

@@ -1,6 +1,12 @@
 <template>
-  <div v-if="loading">
-    <v-skeleton-loader> </v-skeleton-loader>
+  <div v-if="loading" class="text-center">
+    <v-progress-circular
+      :size="70"
+      :width="3"
+      color="purple"
+      indeterminate
+      class="mt-10"
+    ></v-progress-circular>
   </div>
   <div v-else>
     {{ messages }}

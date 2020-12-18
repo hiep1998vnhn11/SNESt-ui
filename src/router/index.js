@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Main from '@/pages/Main/Main'
 import Login from '@/pages/Auth/Login'
-import Test from '@/pages/Auth/test'
+import Test from '@/pages/Main/test'
 
 import Home from '@/pages/Main/Home'
 import Store from '@/pages/Main/Store'
@@ -156,7 +156,7 @@ export default new Router({
             },
             {
               path: ':room_id',
-              name: 'Room',
+              name: 'MessageRoom',
               component: Chat
             }
           ]

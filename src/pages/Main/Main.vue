@@ -105,6 +105,7 @@ export default {
   async created() {
     if (!this.currentUser) await this.fetchUser()
     if (!this.socket || this.socket.disconnected) this.connectSocket()
+    console.log(this.$route.name)
   }
 }
 </script>

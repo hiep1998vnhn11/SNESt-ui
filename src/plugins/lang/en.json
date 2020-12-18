@@ -21,7 +21,8 @@
     "create": "Create",
     "friend": "Friend",
     "more": "More",
-    "option": "Option"
+    "option": "Option",
+    "setting": "Setting"
   },
   "action": {
     "like": "Like",
