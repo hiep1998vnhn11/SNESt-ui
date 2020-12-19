@@ -144,6 +144,24 @@
       width="22rem"
       right
     >
+      <template v-slot:prepend>
+        <div class="text-center mt-5">
+          <v-avatar class="avatar-outlined" size="100">
+            <img :src="participant.profile_photo_path" />
+          </v-avatar>
+          <div class="font-weight-bold text-capitalize mt-2">
+            <router-link
+              :to="{
+                name: 'MainProfile',
+                params: { url: participant.url },
+              }"
+              class="black--text text-decoration-none"
+            >
+              {{ participant.name }}
+            </router-link>
+          </div>
+        </div>
+      </template>
       <v-list>
         <v-list-item v-for="n in 50" :key="n" link>
           <v-list-item-content>
