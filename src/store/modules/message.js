@@ -45,6 +45,9 @@ const actions = {
   },
   closeMessageCard({ commit }, index) {
     commit('CLOSE_MESSAGE_CARD', index)
+  },
+  setDefaultMessage({ commit }) {
+    commit('SET_DEFAULT_MESSAGE')
   }
 }
 const mutations = {
@@ -79,6 +82,10 @@ const mutations = {
   },
   CLOSE_MESSAGE_CARD: function(state, index) {
     state.messageCards.splice(index, 1)
+  },
+  SET_DEFAULT_MESSAGE: function(state) {
+    state.messages = []
+    state.pageMessage = 1
   }
 }
 export default {

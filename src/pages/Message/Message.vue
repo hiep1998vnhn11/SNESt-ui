@@ -262,6 +262,7 @@ export default {
 .message-main-app {
   position: absolute;
   width: 100%;
+  top: 0px;
   left: 0px;
   z-index: 1;
 }

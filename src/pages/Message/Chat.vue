@@ -107,7 +107,7 @@
       </v-tooltip>
 
       <v-text-field
-        class="ma-auto"
+        class="mt-6"
         dense
         flat
         rounded
@@ -162,11 +162,16 @@
       ></v-progress-circular>
     </div>
     <v-container id="messageContainer" v-else>
-      {{ messages }}
       <chat-row
-        v-for="message in messages"
+        v-for="(message, index) in messages"
         :key="`chat-row-${message.id}`"
         :message="message"
+        :same="
+          messages[index + 1]
+            ? message.user_id !== messages[index + 1].user_id
+            : true
+        "
+        :user="participant"
       />
     </v-container>
   </div>
@@ -185,7 +190,7 @@ export default {
     ChatRow
   },
   methods: {
-    ...mapActions('message', ['getMessage']),
+    ...mapActions('message', ['getMessage', 'setDefaultMessage']),
     ...mapActions('thresh', ['getParticipant']),
     async fetchData() {
       this.loading = true
@@ -234,7 +239,10 @@ export default {
   },
   props: ['convert'],
   watch: {
-    '$route.params': 'fetchData'
+    '$route.params': function() {
+      this.setDefaultMessage()
+      this.fetchData()
+    }
   }
   // updated() {
   //   this.scrollToBottom()
