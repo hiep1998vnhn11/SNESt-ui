@@ -1,13 +1,6 @@
 <template>
-  <div>
-    <v-app-bar
-      fixed
-      :class="classes"
-      flat
-      height="64"
-      outlined
-      v-if="participant"
-    >
+  <div v-if="participant">
+    <v-app-bar fixed :class="classes" flat height="64" outlined>
       <v-badge
         bordered
         bottom

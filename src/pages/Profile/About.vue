@@ -1,7 +1,15 @@
 <template>
   <div>
-    <v-card class="elevation-0 rounded-lg mt-3" outlined>
-      Hello
+    <v-card
+      class="elevation-0 rounded-lg mt-3"
+      outlined
+      max-height="500"
+      scrollable
+    >
+      <v-card-title> hello </v-card-title>
+      <v-card-text>
+        <list-thresh :loading="false" />
+      </v-card-text>
     </v-card>
     <v-card class="elevation-0 rounded-lg mt-3" outlined>
       <v-card-title>
@@ -84,7 +92,9 @@
   </div>
 </template>
 <script>
+import ListThresh from '../../components/Message/ListThresh.vue'
 export default {
+  components: { ListThresh },
   props: ['user'],
   data() {
     return {}
