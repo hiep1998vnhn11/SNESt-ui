@@ -2,11 +2,13 @@ import axios from 'axios'
 
 const state = {
   threshes: [],
-  page: 1
+  page: 1,
+  participant: null
 }
 
 const getters = {
-  threshes: state => state.threshes
+  threshes: state => state.threshes,
+  participant: state => state.participant
 }
 
 const actions = {
@@ -24,6 +26,11 @@ const actions = {
   },
   setThreshPage({ commit }) {
     commit('SET_THRESH_PAGE')
+  },
+  async getParticipant({ commit }, roomId) {
+    let url = `/v1/user/thresh/${roomId}/participant/get`
+    const response = await axios.post(url)
+    commit('SET_PARTICIPANT', response.data.data)
   }
 }
 
@@ -35,6 +42,9 @@ const mutations = {
   SET_THRESH_PAGE: function(state) {
     state.page = 1
     state.threshes = []
+  },
+  SET_PARTICIPANT: function(state, participant) {
+    state.participant = participant
   }
 }
 

@@ -232,5 +232,13 @@
   "Write something with": "Write something with",
   "Message": "Message",
   "Password": "Password",
-  "and you are friend now!": "and you are friend now!"
+  "and you are friend now!": "and you are friend now!",
+  "ConversationInformation": "Conversation information drawer",
+  "StartVideoCall": "Start a Video call",
+  "StartVoiceCall": "Start a Voice call",
+  "Active Now": "Active Now",
+  "OpenMoreAction": "Open More Action",
+  "AttachPhotoVideo": "Attach a Photo or a Video",
+  "ChooseSticker": "Choose a Sticker",
+  "SendLike": "Send a like"
 }

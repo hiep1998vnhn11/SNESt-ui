@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import moment from 'moment'
 Vue.filter('relativeTime', function(value) {
+  if (!value) return 'User not login!'
   return moment(value).fromNow(true)
 })
 

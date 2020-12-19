@@ -1,36 +1,10 @@
 <template>
-  <v-app id="inspire">
-    <!-- <v-app-bar fixed :class="classes" flat height="56" outlined>
-      <v-spacer></v-spacer>
-      <v-responsive max-width="156">
-        <v-text-field
-          dense
-          flat
-          hide-details
-          rounded
-          solo-inverted
-        ></v-text-field>
-      </v-responsive>
-    </v-app-bar>
-
-    <v-app-bar bottom fixed :class="classBottom" flat height="56" outlined>
-      <v-spacer></v-spacer>
-
-      <v-responsive max-width="156">
-        <v-text-field
-          dense
-          flat
-          hide-details
-          rounded
-          solo-inverted
-        ></v-text-field>
-      </v-responsive>
-    </v-app-bar> -->
+  <v-app id="inspire" class="message-main-app">
     <v-navigation-drawer
       v-model="drawer"
-      width="350"
+      width="22rem"
       fixed
-      class="mt-14"
+      class="mt-56"
       :mini-variant="mini"
       mini-variant-width="80"
       disable-resize-watcher
@@ -91,7 +65,7 @@
             >
               <template v-if="room.type === 'private'">
                 <v-list-item-icon>
-                  <v-avatar class="avatar-outlined">
+                  <v-avatar class="avatar-outlined" size="65">
                     <img :src="currentUser.profile_photo_path" />
                   </v-avatar>
                 </v-list-item-icon>
@@ -108,7 +82,7 @@
               </template>
               <template v-else-if="room.type === 'with'">
                 <v-list-item-icon>
-                  <v-avatar class="avatar-outlined">
+                  <v-avatar class="avatar-outlined" size="65">
                     <template v-for="participant in room.participants">
                       <img
                         :key="`avatar-${participant.id}`"
@@ -153,28 +127,11 @@
           class="mt-10"
         ></v-progress-circular>
       </div>
-      <observer @intersect="intersected"></observer>
     </v-navigation-drawer>
 
-    <!-- <v-navigation-drawer
-      v-model="drawer"
-      fixed
-      class="mt-112 index-3"
-      width="300"
-      right
-    >
-      <v-list>
-        <v-list-item v-for="n in 50" :key="n" link>
-          <v-list-item-content>
-            <v-list-item-title>Item {{ n }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer> -->
-
-    <v-main class="grey ml-n13">
-      <v-container fluid>
-        <router-view />
+    <v-main class="grey message-container">
+      <v-container>
+        <router-view :convert="convert" @onConvert="convert = !convert" />
       </v-container>
     </v-main>
   </v-app>
@@ -203,26 +160,21 @@ export default {
       search: '',
       loadingSearch: false,
       selectSearch: false,
-      mini: false
+      mini: false,
+      convert: true
     }
   },
   computed: {
     ...mapGetters('message', ['rooms', 'messages']),
     ...mapGetters('thresh', ['threshes']),
     ...mapGetters('user', ['currentUser']),
-    classes() {
-      return this.mini ? 'ml-0 mt-14' : 'ml-350 mt-14'
-    },
-    classBottom() {
-      return this.mini ? 'ml-80 mr-0' : 'ml-350 mr-300'
-    },
     breakPoint() {
       return this.$vuetify.breakpoint.name
     },
-    avatarUrl(participants) {
+    userParticipant(participants) {
       return participants.forEach(
         participant => participant.user_id !== this.currentUser.id
-      ).user.profile_photo_path
+      )
     }
   },
   methods: {
@@ -243,6 +195,9 @@ export default {
     },
     intersected() {
       this.fetchThresh()
+    },
+    convertInfo() {
+      this.convert = !this.convert
     }
   }
 }
@@ -250,21 +205,25 @@ export default {
 
 <style>
 .ml-350 {
-  margin-left: 350px;
+  margin-left: 22rem;
 }
 
 .mr-300 {
-  margin-right: 300px;
+  margin-right: 22rem;
 }
 .mt-112 {
   margin-top: 112px;
 }
 .ml-80 {
-  margin-left: 70px;
+  margin-left: 22rem;
 }
 .fixed-avatar-card {
   position: fixed;
   z-index: 3;
+}
+
+.mt-56 {
+  margin-top: 56px;
 }
 .index-100 {
   z-index: 100;
@@ -293,5 +252,17 @@ export default {
 
 .navleft-body::-webkit-scrollbar-thumb {
   background: #0077ff;
+}
+
+.message-container {
+  margin-right: 22rem;
+  margin-left: 22rem;
+}
+
+.message-main-app {
+  position: absolute;
+  width: 100%;
+  left: 0px;
+  z-index: 1;
 }
 </style>
