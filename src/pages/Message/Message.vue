@@ -129,7 +129,7 @@
       </div>
     </v-navigation-drawer>
 
-    <v-main class="grey message-container">
+    <v-main class="message-container">
       <v-container>
         <router-view :convert="convert" @onConvert="convert = !convert" />
       </v-container>

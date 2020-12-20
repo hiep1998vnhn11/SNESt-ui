@@ -21,7 +21,7 @@
           offset-x="10"
           offset-y="10"
           class="ml-n9"
-          v-if="user.onlineStatus.status"
+          v-if="user.online_status.status"
         >
           <v-avatar size="40" class="avatar-outlined">
             <v-img :src="user.profile_photo_path"></v-img>
@@ -34,11 +34,11 @@
           <div class="font-weight-bold mb-n2">
             {{ user.name | onlyName }}
           </div>
-          <span class="text-caption" v-if="user.onlineStatus.status">
+          <span class="text-caption" v-if="user.online_status.status">
             Active now
           </span>
           <span class="text-caption" v-else>
-            {{ user.onlineStatus | relativeTime }}
+            {{ user.online_status | relativeTime }}
           </span>
         </v-col>
       </v-btn>

@@ -5,11 +5,12 @@
         <v-btn
           width="40"
           height="40"
-          @click="expand = true"
+          @click="onClickButton"
           outlined
           icon
           text
           exact
+          :loading="loading"
           :class="`ml-2 ${classes}`"
         >
           <v-icon v-bind="attrs" v-on="on">mdi-facebook-messenger</v-icon>
@@ -164,9 +165,23 @@
 
 <script>
 import ListThresh from '../Message/ListThresh.vue'
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   components: { ListThresh },
   methods: {
+    ...mapActions('thresh', ['getThreshes', 'setThreshPage']),
+    async fetchThresh() {
+      if (this.threshes.length) return
+      this.loading = true
+      this.error = null
+      try {
+        await this.getThreshes()
+      } catch (err) {
+        this.error = err.response.data.message
+      }
+      this.loading = false
+    },
     onClickOutsideWithConditional() {
       this.expand = false
       this.optionExpand = false
@@ -177,18 +192,25 @@ export default {
     cancelExpand() {
       this.expand = false
       this.optionExpand = false
+    },
+    onClickButton() {
+      if (!this.expand) this.fetchThresh()
+      this.expand = !this.expand
     }
   },
   computed: {
     classes() {
       return this.expand ? 'primary--text blue lighten-4' : null
-    }
+    },
+    ...mapGetters('thresh', ['threshes'])
   },
   data() {
     return {
       expand: false,
       optionExpand: false,
-      search: ''
+      search: '',
+      loading: false,
+      error: null
     }
   }
 }

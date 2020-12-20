@@ -6,7 +6,7 @@
         bottom
         color="deep-purple accent-4"
         dot
-        :value="participant.onlineStatus.status"
+        :value="participant.online_status.status"
         offset-x="12"
         offset-y="12"
       >
@@ -21,12 +21,12 @@
             v-text="participant.name"
           />
           <v-list-item-subtitle>
-            <span v-if="participant.onlineStatus.status">
+            <span v-if="participant.online_status.status">
               {{ $t('Active Now') }}
             </span>
             <span v-else>
               {{ $t('Active') }}
-              {{ participant.onlineStatus.time | relativeTime }}
+              {{ participant.online_status.time | relativeTime }}
             </span>
           </v-list-item-subtitle>
         </v-list-item-content>
@@ -108,7 +108,7 @@
         autofocus
         background-color="grey lighten-2"
         @keydown.enter.exact.prevent
-        @keydown.enter.exact="sendMessage"
+        @keydown.enter.exact="onSendMessage"
         @keydown.enter.shift.exact="newLine"
         label="Aa"
         v-model="text"
@@ -201,7 +201,11 @@ export default {
     ChatRow
   },
   methods: {
-    ...mapActions('message', ['getMessage', 'setDefaultMessage']),
+    ...mapActions('message', [
+      'getMessage',
+      'setDefaultMessage',
+      'sendMessage'
+    ]),
     ...mapActions('thresh', ['getParticipant']),
     async fetchData() {
       this.loading = true
@@ -216,8 +220,22 @@ export default {
     convertInfo() {
       this.$emit('convert-info')
     },
-    async sendMessage() {
-      await console.log(this.text)
+    async onSendMessage() {
+      if (!this.text.length) return
+      let message = {
+        id: Math.random(),
+        thresh_id: this.$route.params.room_id,
+        user_id: this.currentUser.id,
+        content: this.text
+      }
+      if (this.participant.id !== this.currentUser.id) {
+        this.socket.emit('sendToUser', {
+          userId: this.participant.id,
+          message: message
+        })
+      }
+      this.text = ''
+      await this.sendMessage(message)
     },
     scrollToBottom() {
       var container = this.$el.querySelector('#messageContainer')
@@ -231,6 +249,7 @@ export default {
     ...mapGetters('user', ['currentUser']),
     ...mapGetters('message', ['messages']),
     ...mapGetters('thresh', ['participant']),
+    ...mapGetters('socket', ['socket']),
     classes() {
       return this.convert ? 'ml-350 mt-14 mr-300' : 'ml-80 mt-14'
     },

@@ -53,7 +53,7 @@
               bordered
               bottom
               :color="
-                friend.user_friend.onlineStatus.status
+                friend.user_friend.online_status.status
                   ? 'deep-purple accent-4'
                   : 'grey'
               "

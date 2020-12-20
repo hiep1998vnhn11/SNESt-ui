@@ -30,7 +30,7 @@ const actions = {
     }
   },
   async sendMessage({ commit }, message) {
-    const url = `/v1/user/room/${message.roomId}/message/send`
+    const url = `/v1/user/thresh/${message.thresh_id}/message/send`
     commit('SEND_MESSAGE', message)
     await axios.post(url, {
       content: message.content
