@@ -242,5 +242,8 @@
   "ChooseSticker": "Choose a Sticker",
   "SendLike": "Send a like",
   "Active": "Active",
-  "SeeAllInMessage": "See All In Message"
+  "SeeAllInMessage": "See All In Message",
+  "SearchYourFriendToChatWithThem": "Search Your Friend To Chat With Them",
+  "Friends": "Friends",
+  "Sorry, your search not match any result!": "Sorry, your search not match any result!"
 }

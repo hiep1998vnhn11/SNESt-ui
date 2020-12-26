@@ -3,7 +3,10 @@ const state = {
   rooms: [],
   messages: [],
   pageMessage: 1,
-  messageCards: []
+  messageCards: [],
+  messageCard1: [],
+  messageCard2: [],
+  messageCard3: []
 }
 
 const getters = {

@@ -27,6 +27,7 @@ import SecuritySetting from '@/pages/Setting/Security'
 import Message from '@/pages/Message/Message'
 import Chat from '@/pages/Message/Chat'
 import MainMessage from '@/pages/Message/Main'
+import NewMessage from '@/pages/Message/NewMessage'
 
 Vue.use(Router)
 
@@ -158,6 +159,11 @@ export default new Router({
               path: ':room_id',
               name: 'MessageRoom',
               component: Chat
+            },
+            {
+              path: 'new',
+              name: 'MessageNew',
+              component: NewMessage
             }
           ]
         }

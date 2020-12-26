@@ -195,7 +195,7 @@ import ChatRow from './ChatRow'
 export default {
   async mounted() {
     await this.fetchData()
-    this.scrollToBottom()
+    // this.scrollToBottom()
   },
   components: {
     ChatRow
@@ -237,10 +237,10 @@ export default {
       this.text = ''
       await this.sendMessage(message)
     },
-    scrollToBottom() {
-      var container = this.$el.querySelector('#messageContainer')
-      container.scrollTop = container.scrollHeight
-    },
+    // scrollToBottom() {
+    //   var container = this.$el.querySelector('#messageContainer')
+    //   container.scrollTop = container.scrollHeight
+    // },
     newLine() {
       this.text = this.text
     }
