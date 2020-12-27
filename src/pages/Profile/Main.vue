@@ -48,18 +48,21 @@
           </v-col>
         </v-row>
       </v-card>
-      <post-component
-        class="mt-3"
-        v-for="post in userPost"
-        :key="post.id"
-        :post="post"
-      ></post-component>
+      <div v-if="userPost.length">
+        <post-component
+          class="mt-3"
+          v-for="post in userPost"
+          :key="post.id"
+          :post="post"
+        ></post-component>
+        <observer @intersect="intersected"></observer>
+      </div>
+      <div v-else-if="!loading">not have</div>
       <v-skeleton-loader
         v-if="loading"
         class="mx-auto mt-3"
         type="card"
       ></v-skeleton-loader>
-      <observer @intersect="intersected"></observer>
     </v-col>
     <v-dialog width="600" v-model="filterDialog">
       <v-card>
@@ -244,6 +247,9 @@ export default {
     onDone() {
       this.filterDialog = false
     }
+  },
+  mounted() {
+    this.fetchData()
   },
   computed: {
     ...mapGetters('post', ['userPost']),

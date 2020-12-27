@@ -8,11 +8,11 @@
     :ripple="false"
     height="450"
     @keydown.esc="test"
-    v-if="!!currentUser"
+    v-if="!!currentUser && user"
     :loading="loading"
   >
     <v-toolbar dense color="elevation-0">
-      <v-btn text large class="ml-n3 text-none">
+      <v-btn text large class="ml-n3 text-none" v-if="user">
         <v-badge
           bordered
           bottom
@@ -31,7 +31,7 @@
           <v-img :src="user.profile_photo_path"></v-img>
         </v-avatar>
         <v-col class="mb-n1" cols="5">
-          <div class="font-weight-bold mb-n2">
+          <div class="font-weight-bold mb-0">
             {{ user.name | onlyName }}
           </div>
           <span class="text-caption" v-if="user.online_status.status">
@@ -62,8 +62,6 @@
       class="message-card-text-component text--primary"
       id="container"
     >
-      {{ roomId }} {{ roomID }}
-      {{ messages }}
       <v-container v-if="loading" class="text-center">
         <v-progress-circular
           :size="40"
@@ -72,7 +70,15 @@
           indeterminate
         ></v-progress-circular>
       </v-container>
-      <div v-else-if="!roomId" class="text-center">
+      <div v-else-if="messages.length">
+        <message-row
+          v-for="message in messages"
+          :key="`message-${message.id}-${message.created_at}`"
+          :message="message"
+          :active="true"
+        />
+      </div>
+      <div v-else class="text-center">
         <div>
           <v-avatar class="avatar-outlined" size="100">
             <img :src="user.profile_photo_path" />
@@ -85,14 +91,6 @@
           {{ $t('FriendOnMessage') }}
         </div>
         <div>{{ $t('Write something with') }} {{ user.name | onlyName }}</div>
-      </div>
-      <div v-else>
-        <message-row
-          v-for="message in messages"
-          :key="`message-${message.id}-${message.created_at}`"
-          :message="message"
-          :active="true"
-        />
       </div>
     </v-card-text>
     <v-card-actions>
@@ -135,15 +133,12 @@ import MessageRow from './MessageRow'
 
 export default {
   computed: {
-    ...mapGetters('user', ['currentUser']),
-    ROOMID() {
-      return this.roomID ? this.roomID : this.roomId
-    }
+    ...mapGetters('user', ['currentUser'])
   },
   components: {
     MessageRow
   },
-  props: ['roomId', 'user', 'location'],
+  props: ['roomId', 'location'],
   data() {
     return {
       text: '',
@@ -152,7 +147,8 @@ export default {
       loading: false,
       error: null,
       roomID: null,
-      messages: []
+      messages: [],
+      user: null
     }
   },
   methods: {
@@ -164,61 +160,43 @@ export default {
       return this.selected
     },
     async fetchData() {
-      if (!this.roomId && !this.roomID) return
       this.loading = true
-      let roomId = this.roomID ? this.roomID : this.roomId
       try {
-        let response = await Axios.get(`/v1/user/room/${roomId}/message/get`, {
-          params: {
-            page: 1
+        let user = await Axios.post(
+          `/v1/user/thresh/${this.roomId}/participant/get`
+        )
+        this.user = user.data.data
+        let response = await Axios.get(
+          `/v1/user/thresh/${this.roomId}/message/get`,
+          {
+            params: {
+              page: 1
+            }
           }
-        })
-        this.messages = response.data.data
+        )
+        this.messages = response.data.data.data
       } catch (err) {
         console.log(err.response.data.message)
       }
       this.loading = false
+      console.log(123)
     },
     async onSendMessage() {
       if (this.text) {
-        this.loading = true
-        if (this.roomID) {
-          try {
-            await this.sendMessage({
-              roomId: this.roomID,
-              content: this.text,
-              user_id: this.currentUser.id
-            })
-            this.text = ''
-          } catch (err) {
-            this.error = err.response.data.message
-          }
-        } else if (this.roomId) {
-          try {
-            await this.sendMessage({
-              roomId: this.roomId,
-              content: this.text,
-              user_id: this.currentUser.id
-            })
-            this.text = ''
-          } catch (err) {
-            this.error = err.response.data.message
-          }
-        } else {
-          this.createNewRoom()
-        }
-        this.loading = false
-      }
-    },
-    async createNewRoom() {
-      try {
-        let room = await Axios.post(`/v1/user/room/${this.user.id}/create`, {
+        this.messages.push({
+          id: Math.random(),
+          thresh_id: this.roomId,
+          user_id: this.currentUser.id,
           content: this.text
         })
-        this.roomId = room.id
-        this.fetchData()
-      } catch (err) {
-        this.error = err.response.data.message
+        try {
+          await Axios.post(`/v1/user/thresh/${this.roomId}/message/send`, {
+            content: this.text
+          })
+          this.text = ''
+        } catch (err) {
+          this.error = err.response.data.message
+        }
       }
     },
     scrollToBottom() {
@@ -234,11 +212,7 @@ export default {
     }
   },
   mounted() {
-    this.scrollToBottom()
     this.fetchData()
-  },
-  updated() {
-    this.scrollToBottom()
   }
 }
 </script>

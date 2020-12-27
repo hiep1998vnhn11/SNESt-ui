@@ -1,7 +1,6 @@
 <template>
   <v-main class="grey lighten-3">
     <app-bar :loading="loading" :error="error"></app-bar>
-    {{ error }}
     <v-container>
       <router-view :loading="loading" />
     </v-container>
@@ -84,7 +83,9 @@ export default {
     async onOpenMessage(friend) {
       this.loadingMessageCard = true
       try {
-        let response = await Axios.get(`/v1/user/room/${friend.friend_id}/get`)
+        let response = await Axios.post(
+          `/v1/user/thresh/${friend.friend_id}/get`
+        )
         if (response.data.data) {
           this.newMessage({ room: response.data.data })
         } else {
