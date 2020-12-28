@@ -174,7 +174,7 @@
     </div>
     <v-container id="messageContainer" v-else>
       <chat-row
-        v-for="(message, index) in messages"
+        v-for="(message, index) in messageReverse"
         :key="`chat-row-${message.id}`"
         :message="message"
         :same="
@@ -231,6 +231,7 @@ export default {
       if (this.participant.id !== this.currentUser.id) {
         this.socket.emit('sendToUser', {
           userId: this.participant.id,
+          roomId: this.$route.params.room_id,
           message: message
         })
       }
@@ -258,6 +259,9 @@ export default {
     },
     breakPoint() {
       return this.$vuetify.breakpoint.name
+    },
+    messageReverse() {
+      return this.messages.slice().reverse()
     }
   },
   data() {

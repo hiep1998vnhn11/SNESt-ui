@@ -41,7 +41,7 @@ router.beforeEach((to, from, next) => {
   }
 })
 /* eslint-disable no-new */
-new Vue({
+const app = new Vue({
   el: '#app',
   router,
   vuetify,
@@ -50,3 +50,5 @@ new Vue({
   components: { App },
   template: '<App/>'
 })
+
+export default app

@@ -9,3 +9,7 @@ Vue.filter('onlyName', function(username) {
   let names = username.split(' ')
   return names[0].length <= 5 ? names[0] : names[0].substring(0, 5) + '...'
 })
+
+Vue.filter('reverse', function(value) {
+  return value.slice().reverse()
+})

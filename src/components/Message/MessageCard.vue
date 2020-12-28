@@ -8,6 +8,7 @@
     :ripple="false"
     height="450"
     @keydown.esc="test"
+    @click="clickCard"
     v-if="!!currentUser && user"
     :loading="loading"
   >
@@ -72,10 +73,15 @@
       </v-container>
       <div v-else-if="messages.length">
         <message-row
-          v-for="message in messages"
+          v-for="(message, index) in reverseMessages"
           :key="`message-${message.id}-${message.created_at}`"
           :message="message"
-          :active="true"
+          :same="
+            messages[index + 1]
+              ? message.user_id !== messages[index + 1].user_id
+              : true
+          "
+          :user="user"
         />
       </div>
       <div v-else class="text-center">
@@ -133,7 +139,10 @@ import MessageRow from './MessageRow'
 
 export default {
   computed: {
-    ...mapGetters('user', ['currentUser'])
+    ...mapGetters('user', ['currentUser']),
+    reverseMessages() {
+      return this.messages.slice().reverse()
+    }
   },
   components: {
     MessageRow
@@ -179,11 +188,10 @@ export default {
         console.log(err.response.data.message)
       }
       this.loading = false
-      console.log(123)
     },
     async onSendMessage() {
       if (this.text) {
-        this.messages.push({
+        this.messages.unshift({
           id: Math.random(),
           thresh_id: this.roomId,
           user_id: this.currentUser.id,
@@ -213,6 +221,9 @@ export default {
   },
   mounted() {
     this.fetchData()
+  },
+  updated() {
+    if (!this.loading) this.scrollToBottom()
   }
 }
 </script>

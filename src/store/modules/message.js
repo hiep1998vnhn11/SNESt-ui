@@ -66,7 +66,7 @@ const mutations = {
     state.messages = []
   },
   SEND_MESSAGE: function(state, message) {
-    state.messages.push(message)
+    state.messages.unshift(message)
   },
   PUSH_NEW_MESSAGE_CARD: function(state) {
     if (state.messageCards.length === 3) {
@@ -89,6 +89,16 @@ const mutations = {
   SET_DEFAULT_MESSAGE: function(state) {
     state.messages = []
     state.pageMessage = 1
+  },
+  /*
+    When user received an message on socket server,
+    params:
+      message:  Object {id, content, thresh_id, user_id}
+  */
+  RECEIVED_MESSAGE: function(state, message) {
+    console.log(
+      `received an message ${message.content} at room ${message.thresh_id} from user ${message.user_id}`
+    )
   }
 }
 export default {
