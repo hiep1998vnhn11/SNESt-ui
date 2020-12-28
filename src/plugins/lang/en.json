@@ -245,5 +245,14 @@
   "SeeAllInMessage": "See All In Message",
   "SearchYourFriendToChatWithThem": "Search Your Friend To Chat With Them",
   "Friends": "Friends",
-  "Sorry, your search not match any result!": "Sorry, your search not match any result!"
+  "Sorry, your search not match any result!": "Sorry, your search not match any result!",
+  "SharedPhoto": "Shared Photo",
+  "Privacy&Support": "Privacy & Support",
+  "CustomizeChat": "Customize Chat",
+  "SomethingWentWrong": "Something Went Wrong",
+  "BlockUser": "Block User",
+  "IgnoreMessage": "Ignore Message",
+  "MuteConversation": "Mute Conversation",
+  "ChangeEmoji": "Change Emoji",
+  "ChangeTheme": "Change Theme"
 }

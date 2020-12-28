@@ -124,69 +124,60 @@
         </div>
 
         <!-- display the list of message when not select search -->
-        <v-list v-else-if="currentUser">
-          <template v-for="room in threshes">
-            <v-hover v-slot:default="{ hover }" :key="`room-${room.id}`">
-              <v-list-item
-                link
-                :to="{ name: 'MessageRoom', params: { room_id: room.id } }"
-                active-class="blue--text"
-              >
-                <template v-if="room.type === 'private'">
-                  <v-list-item-icon>
-                    <v-avatar class="avatar-outlined" size="50">
-                      <img :src="currentUser.profile_photo_path" />
-                    </v-avatar>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title
-                      class="font-weight-bold text-capitalize black--text"
-                    >
-                      {{ currentUser.name }}
-                    </v-list-item-title>
-                    <v-list-item-subtitle>
-                      {{ currentUser.name }}
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
-                </template>
-                <template v-else-if="room.type === 'with'">
-                  <v-list-item-icon>
-                    <v-avatar class="avatar-outlined" size="50">
-                      <template v-for="participant in room.participants">
-                        <img
-                          :key="`avatar-${participant.id}`"
-                          v-if="participant.user_id !== currentUser.id"
-                          :src="participant.user.profile_photo_path"
-                        />
-                      </template>
-                    </v-avatar>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title
-                      class="font-weight-bold black--text"
-                      v-for="participant in room.participants"
-                      :key="`name-${participant.id}`"
-                    >
-                      <span v-if="participant.user_id !== currentUser.id">
-                        {{ participant.user.name }}
-                      </span>
-                    </v-list-item-title>
-                  </v-list-item-content>
-                </template>
-                <v-btn
-                  icon
-                  text
-                  outlined
-                  v-show="hover"
-                  @click="onClickOption(room.id)"
-                  style="position: fixed; right: 10px; z-index: 100"
+        <v-container v-else-if="currentUser">
+          <v-btn
+            v-for="room in threshes"
+            :key="`btn-room-${room.id}`"
+            block
+            height="4rem"
+            text
+            :to="{ name: 'MessageRoom', params: { room_id: room.id } }"
+            active-class="primary--text"
+            class="text-none mt-1"
+          >
+            <template v-if="room.type === 'private'">
+              <v-list-item-icon>
+                <v-avatar class="avatar-outlined" size="50">
+                  <img :src="currentUser.profile_photo_path" />
+                </v-avatar>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title
+                  class="font-weight-bold text-capitalize black--text"
                 >
-                  <v-icon>mdi-dots-horizontal</v-icon>
-                </v-btn>
-              </v-list-item>
-            </v-hover>
-          </template>
-        </v-list>
+                  {{ currentUser.name }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ currentUser.name }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </template>
+            <template v-else-if="room.type === 'with'">
+              <v-list-item-icon>
+                <v-avatar class="avatar-outlined" size="50">
+                  <template v-for="participant in room.participants">
+                    <img
+                      :key="`avatar-${participant.id}`"
+                      v-if="participant.user_id !== currentUser.id"
+                      :src="participant.user.profile_photo_path"
+                    />
+                  </template>
+                </v-avatar>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title
+                  class="font-weight-bold black--text"
+                  v-for="participant in room.participants"
+                  :key="`name-${participant.id}`"
+                >
+                  <span v-if="participant.user_id !== currentUser.id">
+                    {{ participant.user.name }}
+                  </span>
+                </v-list-item-title>
+              </v-list-item-content>
+            </template>
+          </v-btn>
+        </v-container>
       </transition>
     </v-navigation-drawer>
 
@@ -316,7 +307,7 @@ export default {
 }
 
 .mt-56 {
-  margin-top: 56px;
+  padding-top: 56px;
 }
 .index-100 {
   z-index: 100;

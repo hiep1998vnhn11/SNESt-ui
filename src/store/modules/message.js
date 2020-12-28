@@ -52,6 +52,9 @@ const actions = {
   },
   setDefaultMessage({ commit }) {
     commit('SET_DEFAULT_MESSAGE')
+  },
+  setMessagePage({ commit }) {
+    commit('SET_PAGE_MESSAGE')
   }
 }
 const mutations = {
@@ -59,7 +62,7 @@ const mutations = {
     state.rooms = rooms
   },
   SET_MESSAGE: function(state, messages) {
-    state.messages = messages
+    state.messages = [...state.messages, ...messages]
     state.pageMessage = state.pageMessage + 1
   },
   SET_PAGE_MESSAGE: function(state) {

@@ -155,12 +155,75 @@
           </div>
         </div>
       </template>
-      <v-list>
-        <v-list-item v-for="n in 50" :key="n" link>
-          <v-list-item-content>
-            <v-list-item-title>Item {{ n }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+      <v-list nav dense>
+        <v-list-group :value="false" prepend-icon="mdi-cog">
+          <template v-slot:activator>
+            <v-list-item-title v-text="$t('CustomizeChat')"></v-list-item-title>
+          </template>
+          <v-list-item link>
+            <v-list-item-title v-text="$t('ChangeTheme')"></v-list-item-title>
+            <v-list-item-icon>
+              <v-icon>mdi-theme-light-dark</v-icon>
+            </v-list-item-icon>
+          </v-list-item>
+          <v-list-item link>
+            <v-list-item-title v-text="$t('ChangeEmoji')"></v-list-item-title>
+            <v-list-item-icon>
+              <v-icon>mdi-sticker-emoji</v-icon>
+            </v-list-item-icon>
+          </v-list-item>
+        </v-list-group>
+
+        <!-- Group only -->
+        <!-- <v-list-group :value="false" prepend-icon="mdi-account-group">
+          <template v-slot:activator>
+            <v-list-item-title v-text="$t('Members')"></v-list-item-title>
+          </template>
+          members
+        </v-list-group> -->
+
+        <v-list-group :value="false" prepend-icon="mdi-lock-outline">
+          <template v-slot:activator>
+            <v-list-item-title
+              v-text="$t('Privacy&Support')"
+            ></v-list-item-title>
+          </template>
+          <v-list-item link>
+            <v-list-item-title
+              v-text="$t('MuteConversation')"
+            ></v-list-item-title>
+            <v-list-item-icon>
+              <v-icon>mdi-bell</v-icon>
+            </v-list-item-icon>
+          </v-list-item>
+          <v-list-item link>
+            <v-list-item-title v-text="$t('IgnoreMessage')"></v-list-item-title>
+            <v-list-item-icon>
+              <v-icon>mdi-message-bulleted-off</v-icon>
+            </v-list-item-icon>
+          </v-list-item>
+          <v-list-item link>
+            <v-list-item-title v-text="$t('BlockUser')"></v-list-item-title>
+            <v-list-item-icon>
+              <v-icon>mdi-account-remove</v-icon>
+            </v-list-item-icon>
+          </v-list-item>
+          <v-list-item link>
+            <v-list-item-title
+              v-text="$t('SomethingWentWrong')"
+            ></v-list-item-title>
+            <v-list-item-icon>
+              <v-icon>mdi-exclamation</v-icon>
+            </v-list-item-icon>
+          </v-list-item>
+        </v-list-group>
+
+        <v-list-group :value="false" prepend-icon="mdi-folder-image">
+          <template v-slot:activator>
+            <v-list-item-title v-text="$t('SharedPhoto')"></v-list-item-title>
+          </template>
+          hello
+        </v-list-group>
       </v-list>
     </v-navigation-drawer>
     <div v-if="loading" class="text-center">
@@ -173,13 +236,14 @@
       ></v-progress-circular>
     </div>
     <div v-else id="messageContainer" :class="` ${classMessage}`">
+      <observer @intersect="intersected" />
       <chat-row
         v-for="(message, index) in messageReverse"
         :key="`chat-row-${message.id}`"
         :message="message"
         :same="
           messages[index + 1]
-            ? message.user_id !== messages[index + 1].user_id
+            ? message.user_id !== messageReverse[index + 1].user_id
             : true
         "
         :user="participant"
@@ -191,6 +255,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import ChatRow from './ChatRow'
+import Observer from '../../components/Observer'
 
 export default {
   async mounted() {
@@ -198,7 +263,8 @@ export default {
     // this.scrollToBottom()
   },
   components: {
-    ChatRow
+    ChatRow,
+    Observer
   },
   methods: {
     ...mapActions('message', [
@@ -211,6 +277,15 @@ export default {
       this.loading = true
       try {
         await this.getParticipant(this.$route.params.room_id)
+        await this.getMessage(this.$route.params.room_id)
+      } catch (err) {
+        this.error = err.toString()
+      }
+      this.loading = false
+    },
+    async fetchMessage() {
+      this.loading = true
+      try {
         await this.getMessage(this.$route.params.room_id)
       } catch (err) {
         this.error = err.toString()
@@ -244,6 +319,9 @@ export default {
     },
     newLine() {
       this.text = this.text
+    },
+    intersected() {
+      this.fetchMessage()
     }
   },
   computed: {
@@ -271,7 +349,17 @@ export default {
     return {
       loading: false,
       error: null,
-      text: ''
+      text: '',
+      admins: [
+        ['Management', 'mdi-account-multiple-outline'],
+        ['Settings', 'mdi-cog-outline']
+      ],
+      cruds: [
+        ['Create', 'mdi-plus-outline'],
+        ['Read', 'mdi-file-outline'],
+        ['Update', 'mdi-update'],
+        ['Delete', 'mdi-delete']
+      ]
     }
   },
   props: ['convert'],
@@ -317,5 +405,9 @@ export default {
 
 #messageContainer::-webkit-scrollbar-thumb {
   background: rgb(212, 0, 255);
+}
+
+.v-btn {
+  letter-spacing: 0 !important;
 }
 </style>
