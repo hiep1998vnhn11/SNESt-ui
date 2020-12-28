@@ -24,7 +24,8 @@ const actions = {
     const url = `/v1/user/thresh/${roomId}/message/get`
     const response = await axios.get(url, {
       params: {
-        page: state.pageMessage
+        page: state.pageMessage,
+        limit: 25
       }
     })
     const messages = response.data.data.data

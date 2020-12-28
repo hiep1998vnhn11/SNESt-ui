@@ -46,6 +46,11 @@ export default new Router({
           component: Home
         },
         {
+          path: '/test',
+          name: 'Test',
+          component: Test
+        },
+        {
           path: 'user/:url',
           component: Profile,
           children: [
@@ -176,11 +181,6 @@ export default new Router({
       meta: {
         requiresVisitor: true
       }
-    },
-    {
-      path: '/test',
-      name: 'Test',
-      component: Test
     },
     {
       path: '/post/:post_id',

@@ -1,12 +1,12 @@
 <template>
-  <v-app id="inspire" class="message-main-app">
+  <div class="message-main-app">
     <v-navigation-drawer
       v-model="drawer"
       width="22rem"
       fixed
       class="mt-56"
       :mini-variant="mini"
-      mini-variant-width="80"
+      mini-variant-width="5rem"
       disable-resize-watcher
     >
       <template v-slot:prepend>
@@ -134,7 +134,7 @@
               >
                 <template v-if="room.type === 'private'">
                   <v-list-item-icon>
-                    <v-avatar class="avatar-outlined" size="65">
+                    <v-avatar class="avatar-outlined" size="50">
                       <img :src="currentUser.profile_photo_path" />
                     </v-avatar>
                   </v-list-item-icon>
@@ -151,7 +151,7 @@
                 </template>
                 <template v-else-if="room.type === 'with'">
                   <v-list-item-icon>
-                    <v-avatar class="avatar-outlined" size="65">
+                    <v-avatar class="avatar-outlined" size="50">
                       <template v-for="participant in room.participants">
                         <img
                           :key="`avatar-${participant.id}`"
@@ -190,12 +190,10 @@
       </transition>
     </v-navigation-drawer>
 
-    <v-main class="message-container">
-      <v-container>
-        <router-view :convert="convert" @onConvert="convert = !convert" />
-      </v-container>
+    <v-main :class="classesMain">
+      <router-view :convert="!mini" @onConvert="mini = !mini" />
     </v-main>
-  </v-app>
+  </div>
 </template>
 
 <script>
@@ -234,6 +232,9 @@ export default {
     ...mapGetters('user', ['currentUser']),
     breakPoint() {
       return this.$vuetify.breakpoint.name
+    },
+    classesMain() {
+      return this.mini ? 'ml-80' : 'ml-350 mr-300'
     },
     userParticipant(participants) {
       return participants.forEach(
@@ -307,7 +308,7 @@ export default {
   margin-top: 112px;
 }
 .ml-80 {
-  margin-left: 22rem;
+  margin-left: 5rem;
 }
 .fixed-avatar-card {
   position: fixed;

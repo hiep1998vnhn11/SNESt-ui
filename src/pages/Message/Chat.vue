@@ -1,6 +1,6 @@
 <template>
   <div v-if="participant">
-    <v-app-bar fixed :class="classes" flat height="64" outlined>
+    <v-app-bar fixed :class="`${classes} mt-14`" flat height="64" outlined>
       <v-badge
         bordered
         bottom
@@ -172,7 +172,7 @@
         class="mt-10"
       ></v-progress-circular>
     </div>
-    <v-container id="messageContainer" v-else>
+    <div v-else id="messageContainer" :class="` ${classMessage}`">
       <chat-row
         v-for="(message, index) in messageReverse"
         :key="`chat-row-${message.id}`"
@@ -184,7 +184,7 @@
         "
         :user="participant"
       />
-    </v-container>
+    </div>
   </div>
 </template>
 
@@ -238,10 +238,10 @@ export default {
       this.text = ''
       await this.sendMessage(message)
     },
-    // scrollToBottom() {
-    //   var container = this.$el.querySelector('#messageContainer')
-    //   container.scrollTop = container.scrollHeight
-    // },
+    scrollToBottom() {
+      var container = this.$el.querySelector('#messageContainer')
+      container.scrollTop = container.scrollHeight
+    },
     newLine() {
       this.text = this.text
     }
@@ -252,10 +252,13 @@ export default {
     ...mapGetters('thresh', ['participant']),
     ...mapGetters('socket', ['socket']),
     classes() {
-      return this.convert ? 'ml-350 mt-14 mr-300' : 'ml-80 mt-14'
+      return this.convert ? 'ml-350 mr-300' : 'ml-80'
     },
     classBottom() {
       return this.convert ? 'ml-350 mr-300' : 'ml-80 mr-0'
+    },
+    classMessage() {
+      return this.convert ? 'right-300' : 'right-0'
     },
     breakPoint() {
       return this.$vuetify.breakpoint.name
@@ -277,11 +280,42 @@ export default {
       this.setDefaultMessage()
       this.fetchData()
     }
+  },
+  updated() {
+    this.scrollToBottom()
   }
-  // updated() {
-  //   this.scrollToBottom()
-  // }
 }
 </script>
 
-<style></style>
+<style>
+#messageContainer {
+  overflow-y: auto;
+  overflow-x: hidden;
+  bottom: 56px;
+  top: 120px;
+  padding: 5px;
+  position: fixed;
+}
+
+.right-300 {
+  right: 22rem;
+  left: 22rem;
+}
+
+.right-0 {
+  right: 0px;
+  left: 5rem;
+}
+
+#messageContainer::-webkit-scrollbar {
+  width: 0.25rem;
+}
+
+#messageContainer::-webkit-scrollbar-track {
+  background: #eeeeee;
+}
+
+#messageContainer::-webkit-scrollbar-thumb {
+  background: rgb(212, 0, 255);
+}
+</style>
