@@ -124,7 +124,7 @@
         </div>
 
         <!-- display the list of message when not select search -->
-        <v-container v-else-if="currentUser">
+        <v-container v-else-if="currentUser" class="navleft-body mt-0">
           <v-btn
             v-for="room in threshes"
             :key="`btn-room-${room.id}`"
@@ -331,19 +331,31 @@ export default {
 }
 
 .navleft-body {
-  position: relative;
+  position: absolute;
+  overflow: hidden;
+  bottom: 0px;
+  top: 185px;
+}
+
+.navleft-body:hover {
+  overflow: auto;
 }
 
 .navleft-body::-webkit-scrollbar {
-  width: 0.25rem;
+  width: 0.35rem;
 }
 
 .navleft-body::-webkit-scrollbar-track {
   background: white;
+  -webkit-border-radius: 10px;
+  border-radius: 25px;
+  padding: 10px;
 }
 
 .navleft-body::-webkit-scrollbar-thumb {
-  background: #0077ff;
+  background: #9e9e9e;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
 }
 
 .message-container {

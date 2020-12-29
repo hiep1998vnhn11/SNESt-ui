@@ -140,6 +140,7 @@ import MessageRow from './MessageRow'
 export default {
   computed: {
     ...mapGetters('user', ['currentUser']),
+    ...mapGetters('socket', ['socket']),
     reverseMessages() {
       return this.messages.slice().reverse()
     }
@@ -179,7 +180,8 @@ export default {
           `/v1/user/thresh/${this.roomId}/message/get`,
           {
             params: {
-              page: 1
+              page: 1,
+              limit: 25
             }
           }
         )
@@ -237,8 +239,29 @@ export default {
 }
 
 .message-card-text-component {
-  overflow-y: scroll;
+  overflow-y: hidden;
   height: 350px;
+}
+
+.message-card-text-component:hover {
+  overflow-y: auto;
+}
+
+.message-card-text-component::-webkit-scrollbar {
+  width: 0.35rem;
+}
+
+.message-card-text-component::-webkit-scrollbar-track {
+  background: white;
+  -webkit-border-radius: 10px;
+  border-radius: 25px;
+  padding: 10px;
+}
+
+.message-card-text-component::-webkit-scrollbar-thumb {
+  background: #9c27b0;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
 }
 
 .active-now-icon {

@@ -1,21 +1,67 @@
 <template>
   <div>
     <v-app-bar fixed :class="classes" flat height="64" outlined>
-      <v-autocomplete
-        v-model="model"
-        :items="items"
-        :loading="isLoading"
-        :search-input.sync="search"
-        hide-no-data
-        hide-selected
-        item-text="Description"
-        item-value="API"
-        :label="$t('To:')"
-        :placeholder="$t('SearchYourFriendToChatWithThem')"
-        prepend-icon="mdi-account-search"
-        return-object
-        class="mt-7"
-      ></v-autocomplete>
+      <span>{{ $t('To:') }}</span>
+      <div
+        v-click-outside="{
+          handler: onClickOutsideWithConditional,
+          closeConditional,
+        }"
+      >
+        <v-text-field
+          v-model="search"
+          rounded
+          single-line
+          hide-details
+          large
+          @click="focus = true"
+          @focus="focus = true"
+          autofocus
+        >
+          <template v-slot:prepend-inner> </template>
+        </v-text-field>
+        <v-expand-transition>
+          <v-card
+            v-show="focus"
+            height="25rem"
+            width="20rem"
+            class="expand-transition-result rounded-lg elevation-10"
+          >
+            <div v-if="loading" class="text-center">
+              <v-progress-circular
+                :size="30"
+                :width="2"
+                color="purple"
+                indeterminate
+                class="mt-10"
+              ></v-progress-circular>
+            </div>
+            <div v-else-if="search && result.length" class="mx-2 mt-2">
+              <v-btn
+                v-for="friend in result"
+                :key="`btn-friend-${friend.id}`"
+                block
+                height="3rem"
+                text
+                active-class="primary--text"
+                class="text-none mt-1 rounded-lg text-body-1"
+              >
+                <v-avatar class="avatar-outlined ml-n2 mr-2" size="35">
+                  <img :src="friend.user_friend.profile_photo_path" />
+                </v-avatar>
+                {{ friend.user_friend.name }}
+                <v-spacer />
+              </v-btn>
+            </div>
+            <v-container
+              v-else-if="search && !result.length"
+              class="text-center text--secondary"
+            >
+              {{ $t('NotAnyResultForSearchKey') }} {{ search }}
+            </v-container>
+          </v-card>
+        </v-expand-transition>
+      </div>
     </v-app-bar>
     <v-expand-transition v-if="model">
       <v-list v-if="model" class="red lighten-3">
@@ -27,11 +73,7 @@
         </v-list-item>
       </v-list>
     </v-expand-transition>
-    <v-card>
-      {{ entries }}
-      {{ items }}
-      {{ model }}
-    </v-card>
+    <v-card> </v-card>
   </div>
 </template>
 <script>
@@ -40,60 +82,84 @@ import axios from 'axios'
 export default {
   data() {
     return {
-      convert: false,
       descriptionLimit: 60,
-      entries: [],
-      isLoading: false,
+      result: [],
+      loading: false,
       model: null,
-      search: null
+      search: null,
+      text: '',
+      focus: false,
+      error: null
     }
   },
-  methods: {},
-  created() {},
+  methods: {
+    onClickOutsideWithConditional() {
+      this.focus = false
+    },
+    closeConditional(e) {
+      return this.focus
+    }
+  },
+  props: ['convert'],
   mounted() {},
   computed: {
     classes() {
-      return this.convert ? 'ml-350 mt-14 mr-300' : 'ml-80 mt-14'
-    },
-    fields() {
-      if (!this.model) return []
-
-      return Object.keys(this.model).map(key => {
-        return {
-          key,
-          value: this.model[key] || 'n/a'
-        }
-      })
-    },
-    items() {
-      return this.entries.map(entry => {
-        const Description = entry.user_friend.name
-        return Object.assign({}, entry, { Description })
-      })
+      return this.convert ? 'ml-350 mt-14' : 'ml-80 mt-14'
     }
   },
   watch: {
     async search(val) {
-      // Items have already been loaded
-      if (this.items.length > 0) return
-      // Items have already been requested
-      if (this.isLoading) return
-      this.isLoading = true
-      // Lazily load input items
+      if (!val || this.loading) return
+      this.loading = true
+      this.error = null
       try {
         const response = await axios.post('/v1/user/friend/get', {
-          params: {
-            search_key: this.search.toLowerCase()
-          }
+          search_key: val.toLowerCase()
         })
-        this.entries = response.data.data
+        this.result = response.data.data
       } catch (err) {
-        this.err = err
+        this.error = err.response.data.messasge
       }
-      this.isLoading = false
+      this.loading = false
     }
   }
 }
 </script>
 <style scoped>
+.expand-transition-result {
+  position: absolute;
+  top: 4rem;
+  overflow: hidden;
+}
+
+.expand-transition-result:hover {
+  overflow: auto;
+}
+
+.expand-transition-result::-webkit-scrollbar {
+  width: 0.35rem;
+  margin-right: 5px;
+}
+
+.expand-transition-result::-webkit-scrollbar-track {
+  background: white;
+  -webkit-border-radius: 10px;
+  border-radius: 25px;
+  padding: 10px;
+}
+
+.expand-transition-result::-webkit-scrollbar-thumb {
+  background: #9e9e9e;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+}
+
+.expand-transition-result::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
+  display: none;
+}
+.expand-transition-result::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
 </style>

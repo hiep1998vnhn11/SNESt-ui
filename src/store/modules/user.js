@@ -73,6 +73,20 @@ const mutations = {
   },
   SET_FRIENDS: function(state, friends) {
     state.friends = friends
+  },
+  USER_LOGGED_IN: function(state, userId) {
+    state.friends.forEach(friend => {
+      if (friend.friend_id === userId) {
+        friend.user_friend.online_status.status = true
+      }
+    })
+  },
+  USER_LOGGED_OUT: function(state, userId) {
+    state.friends.forEach(friend => {
+      if (friend.friend_id === userId) {
+        friend.user_friend.online_status.status = false
+      }
+    })
   }
 }
 

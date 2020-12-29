@@ -254,5 +254,7 @@
   "IgnoreMessage": "Ignore Message",
   "MuteConversation": "Mute Conversation",
   "ChangeEmoji": "Change Emoji",
-  "ChangeTheme": "Change Theme"
+  "ChangeTheme": "Change Theme",
+  "You": "You",
+  "NotAnyResultForSearchKey": "Not Any Result For Search Key"
 }
