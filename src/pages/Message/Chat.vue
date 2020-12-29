@@ -291,6 +291,7 @@ export default {
         this.error = err.toString()
       }
       this.loading = false
+      this.load = true
     },
     convertInfo() {
       this.$emit('convert-info')
@@ -301,13 +302,18 @@ export default {
         id: Math.random(),
         thresh_id: this.$route.params.room_id,
         user_id: this.currentUser.id,
-        content: this.text
+        content: this.text,
+        user: {
+          id: this.currentUser.id,
+          name: this.currentUser.name
+        }
       }
       if (this.participant.id !== this.currentUser.id) {
         this.socket.emit('sendToUser', {
           userId: this.participant.id,
           roomId: this.$route.params.room_id,
-          message: message
+          message: message,
+          userName: this.participant.name
         })
       }
       this.text = ''
@@ -350,16 +356,7 @@ export default {
       loading: false,
       error: null,
       text: '',
-      admins: [
-        ['Management', 'mdi-account-multiple-outline'],
-        ['Settings', 'mdi-cog-outline']
-      ],
-      cruds: [
-        ['Create', 'mdi-plus-outline'],
-        ['Read', 'mdi-file-outline'],
-        ['Update', 'mdi-update'],
-        ['Delete', 'mdi-delete']
-      ]
+      load: false
     }
   },
   props: ['convert'],
@@ -370,7 +367,9 @@ export default {
     }
   },
   updated() {
-    this.scrollToBottom()
+    if (this.load) this.load = false
+    else this.scrollToBottom()
+    console.log('updated')
   }
 }
 </script>

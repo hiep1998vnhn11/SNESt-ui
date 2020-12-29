@@ -14,8 +14,9 @@ const actions = {
     const socket = io(process.env.VUE_APP_SOCKET_URL)
     socket.emit('login', rootState.user.currentUser.id)
     socket.emit('join', { userId: rootState.user.currentUser.id, roomId: 1 })
-    socket.on('receiptMessage', ({ userId, roomId, message }) => {
+    socket.on('receiptMessage', ({ userId, roomId, message, userName }) => {
       commit('message/RECEIVED_MESSAGE', message, { root: true })
+      commit('thresh/RECEIVED_MESSAGE', { message, userName }, { root: true })
       if (app.$route.params.room_id === roomId) {
         commit('message/SEND_MESSAGE', message, { root: true })
       }

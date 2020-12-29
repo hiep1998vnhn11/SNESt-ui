@@ -45,6 +45,23 @@ const mutations = {
   },
   SET_PARTICIPANT: function(state, participant) {
     state.participant = participant
+  },
+  RECEIVED_MESSAGE: function(state, payload) {
+    const messageObject = Object.assign(payload.message, {
+      user: { id: payload.message.user_id, name: payload.userName }
+    })
+    state.threshes.forEach(thresh => {
+      if (thresh.id === Number(payload.message.thresh_id)) {
+        thresh.last_message = messageObject
+      }
+    })
+  },
+  SEND_MESSAGE: function(state, message) {
+    state.threshes.forEach(thresh => {
+      if (thresh.id === Number(message.thresh_id)) {
+        thresh.last_message = message
+      }
+    })
   }
 }
 

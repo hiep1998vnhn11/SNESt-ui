@@ -148,7 +148,7 @@
                   {{ currentUser.name }}
                 </v-list-item-title>
                 <v-list-item-subtitle>
-                  {{ currentUser.name }}
+                  {{ $t('You') }} : {{ room.last_message.content }}
                 </v-list-item-subtitle>
               </v-list-item-content>
             </template>
@@ -174,6 +174,14 @@
                     {{ participant.user.name }}
                   </span>
                 </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{
+                    room.last_message.user_id === currentUser.id
+                      ? $t('You')
+                      : room.last_message.user.name
+                  }}
+                  : {{ room.last_message.content }}
+                </v-list-item-subtitle>
               </v-list-item-content>
             </template>
           </v-btn>
