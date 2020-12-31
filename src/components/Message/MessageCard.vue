@@ -189,16 +189,31 @@ export default {
       } catch (err) {
         console.log(err.response.data.message)
       }
+      this.socket.on(
+        'receiptMessage',
+        ({ userId, roomId, message, userName }) => {
+          if (roomId === this.roomId) this.messages.unshift(message)
+        }
+      )
       this.loading = false
     },
     async onSendMessage() {
       if (this.text) {
-        this.messages.unshift({
+        const message = {
           id: Math.random(),
           thresh_id: this.roomId,
           user_id: this.currentUser.id,
           content: this.text
-        })
+        }
+        if (this.user.id !== this.currentUser.id) {
+          this.socket.emit('sendToUser', {
+            userId: this.user.id,
+            roomId: this.roomId,
+            message: message,
+            userName: this.user.name
+          })
+        }
+        this.messages.unshift(message)
         try {
           await Axios.post(`/v1/user/thresh/${this.roomId}/message/send`, {
             content: this.text

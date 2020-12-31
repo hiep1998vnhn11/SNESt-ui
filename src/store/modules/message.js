@@ -1,4 +1,6 @@
 import axios from 'axios'
+import app from '@/main'
+
 const state = {
   rooms: [],
   messages: [],
@@ -80,13 +82,13 @@ const mutations = {
     state.messageCards.unshift('new')
   },
   PUSH_USER_MESSAGE_CARD: function(state, room) {
+    // console.log(card)
+    const card = { type: 'room', room: room }
+    // if (state.messageCards.find(card)) return
     if (state.messageCards.length === 3) {
       state.messageCards.pop()
     }
-    state.messageCards.unshift({
-      type: 'room',
-      room: room
-    })
+    state.messageCards.unshift(card)
   },
   CLOSE_MESSAGE_CARD: function(state, index) {
     state.messageCards.splice(index, 1)
@@ -101,9 +103,9 @@ const mutations = {
       message:  Object {id, content, thresh_id, user_id}
   */
   RECEIVED_MESSAGE: function(state, message) {
-    console.log(
-      `received an message ${message.content} at room ${message.thresh_id} from user ${message.user_id}`
-    )
+    if (app.$route.params.room_id === message.thresh_id) {
+      state.messages.unshift(message)
+    }
   }
 }
 export default {
