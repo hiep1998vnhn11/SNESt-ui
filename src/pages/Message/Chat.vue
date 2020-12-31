@@ -235,8 +235,8 @@
         class="mt-10"
       ></v-progress-circular>
     </div>
-    <div v-else id="messageContainer" :class="` ${classMessage}`">
-      <observer @intersect="intersected" />
+    <div v-else id="messageContainer" :class="`${classMessage}`">
+      <!-- <observer @intersect="intersected" /> -->
       <chat-row
         v-for="(message, index) in messageReverse"
         :key="`chat-row-${message.id}`"
@@ -246,6 +246,7 @@
             ? message.user_id !== messageReverse[index + 1].user_id
             : true
         "
+        class="d-flex align-end"
         :user="participant"
       />
     </div>
