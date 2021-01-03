@@ -5,13 +5,13 @@
         <v-btn
           width="40"
           height="40"
-          @click="onClickButton"
           outlined
           icon
           text
           exact
           :loading="loading"
-          :class="`ml-2 ${classes}`"
+          :class="`mx-1 ${classes}`"
+          @click="onClickButton"
         >
           <v-icon v-bind="attrs" v-on="on">mdi-facebook-messenger</v-icon>
         </v-btn>
@@ -21,12 +21,12 @@
     <div class="show-message-app-bar">
       <v-expand-transition bottom>
         <v-card
+          v-show="expand"
           v-click-outside="{
             handler: onClickOutsideWithConditional,
             closeConditional,
           }"
-          v-show="expand"
-          width="350"
+          width="21rem"
           max-height="600"
           class="mx-auto scroll-y rounded-lg"
         >
@@ -37,9 +37,9 @@
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   v-bind="attrs"
-                  v-on="on"
                   icon
                   small
+                  v-on="on"
                   @click="optionExpand = !optionExpand"
                 >
                   <v-icon>mdi-dots-horizontal</v-icon>
@@ -51,12 +51,12 @@
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   v-bind="attrs"
-                  v-on="on"
                   icon
                   small
                   class="ml-3"
+                  to="/messages"
+                  v-on="on"
                   @click="cancelExpand"
-                  :to="{ name: 'Message' }"
                 >
                   <v-icon>mdi-arrow-expand-all</v-icon>
                 </v-btn>
@@ -65,7 +65,7 @@
             </v-tooltip>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
-                <v-btn v-bind="attrs" v-on="on" icon small class="ml-3 mr-1">
+                <v-btn v-bind="attrs" icon small class="ml-3 mr-1" v-on="on">
                   <v-icon>mdi-pencil-box-outline</v-icon>
                 </v-btn>
               </template>
@@ -88,18 +88,8 @@
             </v-text-field>
           </v-toolbar>
           <v-card-text class="pa-1">
-            <list-thresh :loading="false" />
+            <list-thresh :loading="loading" />
           </v-card-text>
-          <v-card-actions>
-            <v-btn
-              class="text-capitalize primary--text"
-              block
-              text
-              :to="{ name: 'Message' }"
-            >
-              {{ $t('SeeAllInMessage') }}
-            </v-btn>
-          </v-card-actions>
         </v-card>
       </v-expand-transition>
       <div class="show-message-option">
@@ -164,11 +154,28 @@
 </template>
 
 <script>
-import ListThresh from '../Message/ListThresh.vue'
 import { mapGetters, mapActions } from 'vuex'
+import ListThresh from '@/components/Message/ListThresh'
 
 export default {
-  components: { ListThresh },
+  data() {
+    return {
+      expand: false,
+      optionExpand: false,
+      search: '',
+      loading: false,
+      error: null
+    }
+  },
+  components: {
+    ListThresh
+  },
+  computed: {
+    classes() {
+      return this.expand ? 'primary--text blue lighten-4' : null
+    },
+    ...mapGetters('thresh', ['threshes'])
+  },
   methods: {
     ...mapActions('thresh', ['getThreshes', 'setThreshPage']),
     async fetchThresh() {
@@ -197,21 +204,6 @@ export default {
       if (!this.expand) this.fetchThresh()
       this.expand = !this.expand
     }
-  },
-  computed: {
-    classes() {
-      return this.expand ? 'primary--text blue lighten-4' : null
-    },
-    ...mapGetters('thresh', ['threshes'])
-  },
-  data() {
-    return {
-      expand: false,
-      optionExpand: false,
-      search: '',
-      loading: false,
-      error: null
-    }
   }
 }
 </script>
@@ -220,8 +212,8 @@ export default {
 .show-message-app-bar {
   position: absolute;
   z-index: 900;
-  right: 20px;
-  top: 50px;
+  left: 0.5rem;
+  top: 10.5rem;
 }
 
 .title-message-expand {

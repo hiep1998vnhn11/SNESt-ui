@@ -5,15 +5,15 @@
         <v-btn
           width="40"
           height="40"
-          @click="onClick"
           outlined
           icon
           text
-          :class="`ml-2 ${classes}`"
+          :class="`mx-1 ${classes}`"
           :loading="loading"
+          @click="onClick"
         >
           <v-badge :content="numberUnread" :value="numberUnread" color="green">
-            <v-icon color="black" v-bind="attrs" v-on="on">mdi-bell</v-icon>
+            <v-icon v-bind="attrs" v-on="on">mdi-bell</v-icon>
           </v-badge>
         </v-btn>
       </template>
@@ -22,12 +22,12 @@
     <div class="show-noti-app-bar">
       <v-expand-transition right>
         <v-card
+          v-show="expand"
           v-click-outside="{
             handler: onClickOutsideWithConditional,
             closeConditional,
           }"
-          v-show="expand"
-          width="350"
+          width="21rem"
           class="mx-auto"
         >
           <v-card-title class="headline font-weight-black">
@@ -45,14 +45,14 @@
           <v-container>
             <v-list three-line>
               <v-list-item-group
+                v-model="selected"
                 active-class="pink--text"
                 multiple
-                v-model="selected"
               >
                 <template v-for="(item, index) in notifications">
                   <v-list-item
-                    :key="item.data.id"
                     v-if="item.type.includes('FriendNotification')"
+                    :key="item.data.id"
                     inactive
                   >
                     <v-list-item-avatar size="45">
@@ -64,8 +64,8 @@
                       </span>
                       {{ $t('has just sent you a friend invitation') }}
                       <v-row
-                        class="ma-n3"
                         v-if="item.data.status === 'pending'"
+                        class="ma-n3"
                       >
                         <v-col cols="6" class="mr-n4 ml-2">
                           <v-btn
@@ -114,6 +114,24 @@ import axios from 'axios'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
+  data() {
+    return {
+      expand: false,
+      loading: false,
+      error: null,
+      selected: []
+    }
+  },
+  computed: {
+    classes() {
+      return this.expand ? 'primary--text blue lighten-4' : null
+    },
+    ...mapGetters('notification', ['notifications', 'numberUnread']),
+    ...mapGetters('socket', ['socket'])
+  },
+  mounted() {
+    this.fetchUnread()
+  },
   methods: {
     ...mapActions('notification', ['getNotifications', 'getNumberUnread']),
     onClickOutsideWithConditional() {
@@ -144,36 +162,18 @@ export default {
       if (!this.expand) this.fetchData()
       this.expand = true
     },
-    async onFriendAccept(index) {
+    onFriendAccept(index) {
       this.notifications[index].data.status = 'accepted'
       // const response = await axios.post(`/v1/user/friend/${this.notifications[index].id}/accept`)
       const response = 'hello'
       this.socket.emit('acceptFriend', {
         userId: this.notifications[index].data.user.id,
-        response: response
+        response
       })
     },
     async onFriendCancel(index) {
       this.notifications[index].data.status = 'canceled'
       await axios.post('/v1/user/friend/123/denied')
-    }
-  },
-  computed: {
-    classes() {
-      return this.expand ? 'primary--text blue lighten-4' : null
-    },
-    ...mapGetters('notification', ['notifications', 'numberUnread']),
-    ...mapGetters('socket', ['socket'])
-  },
-  mounted() {
-    this.fetchUnread()
-  },
-  data() {
-    return {
-      expand: false,
-      loading: false,
-      error: null,
-      selected: []
     }
   }
 }
@@ -182,8 +182,8 @@ export default {
 <style>
 .show-noti-app-bar {
   position: absolute;
-  z-index: 100;
-  top: 50px;
-  right: 20px;
+  z-index: 900;
+  left: 0.5rem;
+  top: 10.5rem;
 }
 </style>

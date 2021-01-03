@@ -5,18 +5,18 @@
         <v-btn
           width="40"
           height="40"
-          @click="expand = true"
           outlined
           icon
           text
-          :class="`ml-2 ${classes}`"
+          :class="`mx-1 ${classes}`"
+          @click="expand = true"
         >
           <v-icon v-bind="attrs" v-on="on">mdi-menu-down</v-icon>
         </v-btn>
       </template>
       <span>{{ $t('common.option') }}</span>
     </v-tooltip>
-    <v-dialog persistent v-model="dialog" width="600">
+    <v-dialog v-model="dialog" persistent width="600">
       <v-card>
         <div v-if="error">
           <v-card-title class="font-weight-bold">
@@ -68,11 +68,7 @@
               active-class="blue lighten-3"
               @click="feedback = true"
             >
-              <v-avatar
-                outlined
-                icon
-                class="grey lighten-3 avatar-outlined left-8"
-              >
+              <v-avatar outlined icon class="avatar-outlined left-8">
                 <v-icon>mdi-message-alert</v-icon>
               </v-avatar>
               <div class="text-left">
@@ -91,11 +87,7 @@
               active-class="blue lighten-3"
               @click="error = true"
             >
-              <v-avatar
-                outlined
-                icon
-                class="grey lighten-3 avatar-outlined left-8"
-              >
+              <v-avatar outlined icon class="avatar-outlined left-8">
                 <v-icon>mdi-message-alert</v-icon>
               </v-avatar>
               <div class="text-left">
@@ -111,33 +103,30 @@
     <div class="show-setting-app-bar">
       <v-expand-transition right>
         <v-card
+          v-show="expand"
           v-click-outside="{
             handler: onClickOutsideWithConditional,
             closeConditional,
           }"
-          v-show="expand"
-          width="350"
+          width="21rem"
           class="mx-auto"
         >
           <v-container>
             <v-btn
+              v-if="!!currentUser"
               text
-              class="text-capitalize text-h6 font-weight-bold rounded-md mb-2"
+              class="rounded-md mb-2"
               height="75"
               block
-              active-class="blue lighten-3"
-              :to="{
-                name: 'MainProfile',
-                params: { url: currentUser.url },
-              }"
-              v-if="!!currentUser"
+              active-class="primary--text"
+              :to="{name: 'MainProfile',params: { url: currentUser.url }}"
             >
-              <v-avatar class="left-8 avatar-outlined" size="60">
+              <v-avatar class="mr-3 avatar-outlined" size="60">
                 <img :src="currentUser.profile_photo_path" />
               </v-avatar>
-              <div class="text-left">
+              <div class="text-left text-capitalize text-h5 font-weight-bold">
                 {{ currentUser.name }}
-                <div class="text-caption">Go to your profile</div>
+                <div class="text-none text-caption">Go to your profile</div>
               </div>
               <v-spacer></v-spacer>
             </v-btn>
@@ -150,12 +139,7 @@
               active-class="blue lighten-3"
               @click="dialog = true"
             >
-              <v-avatar
-                outlined
-                icon
-                size="40"
-                class="grey lighten-3 avatar-outlined left-15"
-              >
+              <v-avatar outlined icon size="40" class="avatar-outlined left-15">
                 <v-icon>mdi-message-alert</v-icon>
               </v-avatar>
               <div class="text-left">
@@ -176,12 +160,7 @@
               active-class="blue lighten-3"
               :to="{ name: 'AccountSetting' }"
             >
-              <v-avatar
-                outlined
-                icon
-                size="40"
-                class="grey lighten-3 avatar-outlined left-15"
-              >
+              <v-avatar outlined icon size="40" class="avatar-outlined left-15">
                 <v-icon>mdi-cog</v-icon>
               </v-avatar>
               Setting and privacy
@@ -196,12 +175,7 @@
               active-class="blue lighten-3"
               @click="dialog = true"
             >
-              <v-avatar
-                outlined
-                icon
-                size="40"
-                class="grey lighten-3 avatar-outlined left-15"
-              >
+              <v-avatar outlined icon size="40" class="avatar-outlined left-15">
                 <v-icon>mdi-progress-question</v-icon>
               </v-avatar>
               help and support
@@ -216,12 +190,7 @@
               active-class="blue lighten-3"
               @click="dialog = true"
             >
-              <v-avatar
-                outlined
-                icon
-                size="40"
-                class="grey lighten-3 avatar-outlined left-15"
-              >
+              <v-avatar outlined icon size="40" class="avatar-outlined left-15">
                 <v-icon>mdi-moon-waning-crescent</v-icon>
               </v-avatar>
               Display <v-spacer></v-spacer>
@@ -234,12 +203,7 @@
               block
               @click="onLogout"
             >
-              <v-avatar
-                outlined
-                icon
-                size="40"
-                class="grey lighten-3 avatar-outlined left-15"
-              >
+              <v-avatar outlined icon size="40" class="avatar-outlined left-15">
                 <v-icon>mdi-logout</v-icon>
               </v-avatar>
               Logout
@@ -256,6 +220,20 @@
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
+  data() {
+    return {
+      expand: false,
+      dialog: false,
+      error: false,
+      feedback: false
+    }
+  },
+  computed: {
+    classes() {
+      return this.expand ? 'primary--text blue lighten-4' : null
+    },
+    ...mapGetters('user', ['currentUser'])
+  },
   methods: {
     ...mapActions('user', ['logout', 'getUser']),
     onClickOutsideWithConditional() {
@@ -274,21 +252,7 @@ export default {
     },
     async onLogout() {
       await this.logout()
-      this.$router.push({ name: 'Login' })
-    }
-  },
-  computed: {
-    classes() {
-      return this.expand ? 'primary--text blue lighten-4' : null
-    },
-    ...mapGetters('user', ['currentUser'])
-  },
-  data() {
-    return {
-      expand: false,
-      dialog: false,
-      error: false,
-      feedback: false
+      this.$router.push('/login')
     }
   }
 }
@@ -297,15 +261,8 @@ export default {
 <style>
 .show-setting-app-bar {
   position: absolute;
-  z-index: 100;
-  top: 50px;
-  right: 20px;
-}
-
-.left-8 {
-  left: -8px;
-}
-.left-15 {
-  left: -15px;
+  z-index: 900;
+  left: 0.5rem;
+  top: 10.5rem;
 }
 </style>

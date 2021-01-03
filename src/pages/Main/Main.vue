@@ -1,5 +1,5 @@
 <template>
-  <v-main class="grey lighten-3">
+  <div>
     <app-bar :loading="loading" :error="error"></app-bar>
     <v-container>
       <router-view :loading="loading" />
@@ -28,7 +28,7 @@
         <v-icon color="black" v-text="messageIcon"></v-icon>
       </v-btn>
     </div>
-  </v-main>
+  </div>
 </template>
 
 <script>

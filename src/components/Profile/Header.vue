@@ -5,8 +5,8 @@
       type="image,article ,table-row"
     ></v-skeleton-loader>
     <v-container v-else-if="!!user">
-      <v-card justify="center" class="mx-auto" max-width="800px" height="350px">
-        <v-img class="align-end" width="800px" height="350px" :src="background">
+      <v-card justify="center" class="mx-auto" max-width="100%" height="400">
+        <v-img class="align-end" width="100%" height="400" :src="background">
           <v-row>
             <v-col cols="4">
               <change-background

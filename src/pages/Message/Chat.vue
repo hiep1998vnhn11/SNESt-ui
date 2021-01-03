@@ -1,6 +1,13 @@
 <template>
   <div v-if="participant">
-    <v-app-bar fixed :class="`${classes} mt-14`" flat height="64" outlined>
+    <v-app-bar
+      fixed
+      :class="`${classes} ${classRight} mt-16`"
+      flat
+      height="64"
+      outlined
+      style="z-index: 3"
+    >
       <v-badge
         bordered
         bottom
@@ -42,7 +49,7 @@
       </v-tooltip>
       <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
-          <v-btn small icon text v-bind="attrs" v-on="on" class="ml-3">
+          <v-btn small icon text v-bind="attrs" class="ml-3" v-on="on">
             <v-icon color="primary">mdi-video</v-icon>
           </v-btn>
         </template>
@@ -55,28 +62,30 @@
             icon
             text
             v-bind="attrs"
+            class="ml-3 mr-1"
             v-on="on"
             @click="$emit('onConvert')"
-            class="ml-3 mr-1"
           >
             <v-icon color="primary">mdi-information-outline</v-icon>
           </v-btn>
         </template>
         <span>{{ $t('ConversationInformation') }}</span>
       </v-tooltip>
+      <v-app-bar-nav-icon @click.stop="rightDrawer = !rightDrawer" />
     </v-app-bar>
 
     <v-app-bar
+      :class="`${classes} ${classRight}`"
       bottom
       fixed
-      :class="`${classBottom} elevation-0`"
       flat
       height="56"
       outlined
+      style="z-index: 3"
     >
       <v-tooltip top>
         <template v-slot:activator="{ on, attrs }">
-          <v-btn small icon text v-bind="attrs" v-on="on" class="ml-n3">
+          <v-btn small icon text v-bind="attrs" class="ml-n3" v-on="on">
             <v-icon color="primary">mdi-plus-circle</v-icon>
           </v-btn>
         </template>
@@ -84,7 +93,7 @@
       </v-tooltip>
       <v-tooltip top>
         <template v-slot:activator="{ on, attrs }">
-          <v-btn small icon text v-bind="attrs" v-on="on" class="ml-3">
+          <v-btn small icon text v-bind="attrs" class="ml-3" v-on="on">
             <v-icon color="primary">mdi-image-multiple</v-icon>
           </v-btn>
         </template>
@@ -92,7 +101,7 @@
       </v-tooltip>
       <v-tooltip top>
         <template v-slot:activator="{ on, attrs }">
-          <v-btn small icon text v-bind="attrs" v-on="on" class="ml-3 mr-3">
+          <v-btn small icon text v-bind="attrs" class="ml-3 mr-3" v-on="on">
             <v-icon color="primary">mdi-sticker-emoji</v-icon>
           </v-btn>
         </template>
@@ -100,18 +109,17 @@
       </v-tooltip>
 
       <v-text-field
+        v-model="text"
         class="mt-6"
         dense
         flat
         rounded
         solo
         autofocus
-        background-color="grey lighten-2"
+        label="Aa"
         @keydown.enter.exact.prevent
         @keydown.enter.exact="onSendMessage"
         @keydown.enter.shift.exact="newLine"
-        label="Aa"
-        v-model="text"
       >
         <template v-slot:append>
           <v-btn icon text class="mr-n6" @click="$emit('onConvert')">
@@ -122,7 +130,7 @@
 
       <v-tooltip top>
         <template v-slot:activator="{ on, attrs }">
-          <v-btn icon text v-bind="attrs" v-on="on" class="ml-1">
+          <v-btn icon text v-bind="attrs" class="ml-1" v-on="on">
             <v-icon color="primary">mdi-send</v-icon>
           </v-btn>
         </template>
@@ -131,11 +139,12 @@
     </v-app-bar>
 
     <v-navigation-drawer
-      v-model="convert"
+      v-model="rightDrawer"
       fixed
-      class="mt-56"
+      class="mt-16"
       width="22rem"
       right
+      style="z-index: 3"
     >
       <template v-slot:prepend>
         <div class="text-center mt-5">
@@ -235,7 +244,11 @@
         class="mt-10"
       ></v-progress-circular>
     </div>
-    <div v-else id="messageContainer" :class="`${classMessage}`">
+    <div
+      v-else
+      id="messageContainer"
+      :class="`${classMessage} ${classMessageRight}`"
+    >
       <!-- <observer @intersect="intersected" /> -->
       <chat-row
         v-for="(message, index) in messageReverse"
@@ -251,22 +264,68 @@
       />
     </div>
   </div>
+  <div v-else>
+    {{ $route.params.room_id }}
+  </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import ChatRow from './ChatRow'
-import Observer from '../../components/Observer'
 
 export default {
+  components: {
+    ChatRow
+  },
+  data() {
+    return {
+      loading: false,
+      error: null,
+      text: '',
+      load: false,
+      rightDrawer: true
+    }
+  },
+  computed: {
+    ...mapGetters('user', ['currentUser']),
+    ...mapGetters('message', ['messages']),
+    ...mapGetters('thresh', ['participant']),
+    ...mapGetters('socket', ['socket']),
+    ...mapGetters('app', ['mini', 'drawer']),
+    classes() {
+      return !this.drawer ? '' : this.mini ? 'ml-8rem' : 'ml-22rem'
+    },
+    classRight() {
+      return this.rightDrawer ? 'mr-22rem' : ''
+    },
+    classMessage() {
+      return !this.drawer ? 'left-0rem' : this.mini ? 'left-5rem' : 'left-22rem'
+    },
+    classMessageRight() {
+      return this.rightDrawer ? 'right-22rem' : 'right-0rem'
+    },
+    breakPoint() {
+      return this.$vuetify.breakpoint.name
+    },
+    messageReverse() {
+      return this.messages.slice().reverse()
+    }
+  },
+  watch: {
+    '$route.params'() {
+      this.setDefaultMessage()
+      this.fetchData()
+    }
+  },
+  updated() {
+    if (this.load) this.load = false
+    else this.scrollToBottom()
+  },
   async mounted() {
     await this.fetchData()
     // this.scrollToBottom()
   },
-  components: {
-    ChatRow,
-    Observer
-  },
+
   methods: {
     ...mapActions('message', [
       'getMessage',
@@ -299,7 +358,7 @@ export default {
     },
     async onSendMessage() {
       if (!this.text.length) return
-      let message = {
+      const message = {
         id: Math.random(),
         thresh_id: this.$route.params.room_id,
         user_id: this.currentUser.id,
@@ -313,7 +372,7 @@ export default {
         this.socket.emit('sendToUser', {
           userId: this.participant.id,
           roomId: this.$route.params.room_id,
-          message: message,
+          message,
           userName: this.participant.name
         })
       }
@@ -321,73 +380,48 @@ export default {
       await this.sendMessage(message)
     },
     scrollToBottom() {
-      var container = this.$el.querySelector('#messageContainer')
-      container.scrollTop = container.scrollHeight
-    },
-    newLine() {
-      this.text = this.text
+      const container = this.$el.querySelector('#messageContainer')
+      if (container) container.scrollTop = container.scrollHeight
     },
     intersected() {
       this.fetchMessage()
     }
-  },
-  computed: {
-    ...mapGetters('user', ['currentUser']),
-    ...mapGetters('message', ['messages']),
-    ...mapGetters('thresh', ['participant']),
-    ...mapGetters('socket', ['socket']),
-    classes() {
-      return this.convert ? 'ml-350 mr-300' : 'ml-80'
-    },
-    classBottom() {
-      return this.convert ? 'ml-350 mr-300' : 'ml-80 mr-0'
-    },
-    classMessage() {
-      return this.convert ? 'right-300' : 'right-0'
-    },
-    breakPoint() {
-      return this.$vuetify.breakpoint.name
-    },
-    messageReverse() {
-      return this.messages.slice().reverse()
-    }
-  },
-  data() {
-    return {
-      loading: false,
-      error: null,
-      text: '',
-      load: false
-    }
-  },
-  props: ['convert'],
-  watch: {
-    '$route.params': function() {
-      this.setDefaultMessage()
-      this.fetchData()
-    }
-  },
-  updated() {
-    if (this.load) this.load = false
-    else this.scrollToBottom()
-    console.log('updated')
   }
 }
 </script>
 
 <style>
 #messageContainer {
-  overflow-y: auto;
+  overflow-y: hidden;
   overflow-x: hidden;
   bottom: 56px;
-  top: 120px;
+  top: 128px;
   padding: 5px;
   position: fixed;
 }
 
-.right-300 {
+#messageContainer:hover {
+  overflow-y: auto;
+}
+
+.right-22rem {
   right: 22rem;
+}
+
+.left-22rem {
   left: 22rem;
+}
+
+.right-0rem {
+  right: 0px;
+}
+
+.left-0rem {
+  left: 0px;
+}
+
+.left-5rem {
+  left: 5rem;
 }
 
 .right-0 {
@@ -396,18 +430,35 @@ export default {
 }
 
 #messageContainer::-webkit-scrollbar {
-  width: 0.25rem;
+  width: 0.35rem;
 }
 
 #messageContainer::-webkit-scrollbar-track {
-  background: #eeeeee;
+  background: white;
+  -webkit-border-radius: 10px;
+  border-radius: 25px;
+  padding: 10px;
 }
 
 #messageContainer::-webkit-scrollbar-thumb {
-  background: rgb(212, 0, 255);
+  background: #9c27b0;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
 }
 
 .v-btn {
   letter-spacing: 0 !important;
+}
+
+.ml-22rem {
+  margin-left: 22rem;
+}
+
+.ml-8rem {
+  margin-left: 8rem;
+}
+
+.mr-22rem {
+  margin-right: 22rem;
 }
 </style>
