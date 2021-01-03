@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Main from '@/pages/Main/Main'
-import Login from '@/pages/Auth/Login'
 import Test from '@/pages/Main/test'
 
 import Home from '@/pages/Main/Home'
@@ -9,14 +8,6 @@ import Store from '@/pages/Main/Store'
 import Watch from '@/pages/Main/Watch'
 import Game from '@/pages/Main/Game'
 import Group from '@/pages/Main/Group'
-import ParamPost from '@/pages/Post/ParamPost'
-import Profile from '@/pages/Profile/Profile'
-import UserAbout from '@/pages/Profile/About'
-import UserFriend from '@/pages/Profile/Friend'
-import UserMain from '@/pages/Profile/Main'
-import UserImage from '@/pages/Profile/Image'
-import UserVideo from '@/pages/Profile/Video'
-import UserArchive from '@/pages/Profile/Archive'
 
 import Setting from '@/pages/Setting/Setting'
 import InfoSetting from '@/pages/Setting/Information'
@@ -24,10 +15,22 @@ import AccountSetting from '@/pages/Setting/Account'
 import PrivacySetting from '@/pages/Setting/Privacy'
 import SecuritySetting from '@/pages/Setting/Security'
 
-import Message from '@/pages/Message/Message'
-import Chat from '@/pages/Message/Chat'
 import MainMessage from '@/pages/Message/Main'
-import NewMessage from '@/pages/Message/NewMessage'
+
+import login from '@/pages/login'
+import messages from '@/pages/messages'
+import messagesNew from '@/pages/messages/new'
+import MessagesRoomId from '@/pages/messages/_room_id'
+
+import UserUrl from '@/pages/user/_url.vue'
+import UserUrlIndex from '@/pages/user/_url/index.vue'
+import UserUrlAbout from '@/pages/user/_url/about'
+import UserUrlVideo from '@/pages/user/_url/video'
+import UserUrlArchive from '@/pages/user/_url/archive'
+import UserUrlFriend from '@/pages/user/_url/friend'
+import UserUrlImage from '@/pages/user/_url/image'
+
+import postPostId from '@/pages/post/_post_id'
 
 Vue.use(Router)
 
@@ -52,37 +55,37 @@ export default new Router({
         },
         {
           path: 'user/:url',
-          component: Profile,
+          component: UserUrl,
           children: [
             {
               path: '',
-              name: 'MainProfile',
-              component: UserMain
+              name: 'user-url',
+              component: UserUrlIndex
             },
             {
               path: 'about',
-              name: 'AboutProfile',
-              component: UserAbout
+              name: 'user-url-about',
+              component: UserUrlAbout
             },
             {
               path: 'image',
-              name: 'ImageProfile',
-              component: UserImage
+              name: 'user-url-image',
+              component: UserUrlImage
             },
             {
               path: 'video',
-              name: 'VideoProfile',
-              component: UserVideo
+              name: 'user-url-video',
+              component: UserUrlVideo
             },
             {
               path: 'archive',
-              name: 'ArchiveProfile', // Luu tru
-              component: UserArchive
+              name: 'user-url-archive', // Luu tru
+              component: UserUrlArchive
             },
             {
-              path: 'friends',
-              name: 'FriendProfile',
-              component: UserFriend
+              path: 'friend',
+              name: 'user-url-friend',
+              component: UserUrlFriend
             }
           ]
         },
@@ -150,7 +153,7 @@ export default new Router({
         },
         {
           path: 'messages',
-          component: Message,
+          component: messages,
           meta: {
             requiresAuth: true
           },
@@ -161,14 +164,14 @@ export default new Router({
               component: MainMessage
             },
             {
-              path: ':room_id',
-              name: 'MessageRoom',
-              component: Chat
+              path: 'new',
+              name: 'messages-new',
+              component: messagesNew
             },
             {
-              path: 'new',
-              name: 'MessageNew',
-              component: NewMessage
+              path: ':room_id',
+              name: 'messages-room_id',
+              component: MessagesRoomId
             }
           ]
         }
@@ -176,16 +179,16 @@ export default new Router({
     },
     {
       path: '/login',
-      name: 'Login',
-      component: Login,
+      name: 'login',
+      component: login,
       meta: {
         requiresVisitor: true
       }
     },
     {
       path: '/post/:post_id',
-      name: 'ParamPost',
-      component: ParamPost
+      name: 'post-post_id',
+      component: postPostId
     },
     {
       path: '*',

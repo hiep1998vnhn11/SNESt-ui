@@ -5,7 +5,7 @@
       <div
         v-click-outside="{
           handler: onClickOutsideWithConditional,
-          closeConditional,
+          closeConditional
         }"
       >
         <v-text-field

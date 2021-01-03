@@ -155,7 +155,7 @@
             <router-link
               :to="{
                 name: 'MainProfile',
-                params: { url: participant.url },
+                params: { url: participant.url }
               }"
               class="black--text text-decoration-none"
             >
@@ -271,7 +271,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import ChatRow from './ChatRow'
+import ChatRow from '@/components/ChatRow'
 
 export default {
   components: {

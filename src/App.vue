@@ -40,7 +40,7 @@
           v-if="currentUser"
           icon
           small
-          :to="{ name: 'MainProfile', params: { url: currentUser.url } }"
+          :to="{ name: 'user-url', params: { url: currentUser.url } }"
           class="mr-4"
         >
           <v-avatar size="30">

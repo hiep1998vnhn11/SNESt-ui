@@ -92,7 +92,7 @@
   </div>
 </template>
 <script>
-import ListThresh from '../../components/Message/ListThresh.vue'
+import ListThresh from '@/components/Message/ListThresh.vue'
 export default {
   components: { ListThresh },
   props: ['user'],
