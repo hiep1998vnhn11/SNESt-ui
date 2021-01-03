@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Main from '@/pages/Main/Main'
 import Login from '@/pages/Auth/Login'
-import Test from '@/pages/Auth/test'
+import Test from '@/pages/Main/test'
 
 import Home from '@/pages/Main/Home'
 import Store from '@/pages/Main/Store'
@@ -27,6 +27,7 @@ import SecuritySetting from '@/pages/Setting/Security'
 import Message from '@/pages/Message/Message'
 import Chat from '@/pages/Message/Chat'
 import MainMessage from '@/pages/Message/Main'
+import NewMessage from '@/pages/Message/NewMessage'
 
 Vue.use(Router)
 
@@ -43,6 +44,11 @@ export default new Router({
           path: '',
           name: 'Home',
           component: Home
+        },
+        {
+          path: '/test',
+          name: 'Test',
+          component: Test
         },
         {
           path: 'user/:url',
@@ -156,8 +162,13 @@ export default new Router({
             },
             {
               path: ':room_id',
-              name: 'Room',
+              name: 'MessageRoom',
               component: Chat
+            },
+            {
+              path: 'new',
+              name: 'MessageNew',
+              component: NewMessage
             }
           ]
         }
@@ -170,11 +181,6 @@ export default new Router({
       meta: {
         requiresVisitor: true
       }
-    },
-    {
-      path: '/test',
-      name: 'Test',
-      component: Test
     },
     {
       path: '/post/:post_id',

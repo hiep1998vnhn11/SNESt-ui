@@ -1,158 +1,213 @@
 <template>
-  <v-app id="inspire">
-    <v-app-bar fixed :class="classes" flat height="56" outlined>
-      <v-btn @click="drawer = !drawer">Test</v-btn>
-      {{ breakPoint }}
-      <v-spacer></v-spacer>
-
-      <v-responsive max-width="156">
-        <v-text-field
-          dense
-          flat
-          hide-details
-          rounded
-          solo-inverted
-        ></v-text-field>
-      </v-responsive>
-    </v-app-bar>
-
-    <v-app-bar bottom fixed :class="classBottom" flat height="56" outlined>
-      <v-btn @click="drawer = !drawer">Test</v-btn>
-      <v-spacer></v-spacer>
-
-      <v-responsive max-width="156">
-        <v-text-field
-          dense
-          flat
-          hide-details
-          rounded
-          solo-inverted
-        ></v-text-field>
-      </v-responsive>
-    </v-app-bar>
+  <div class="message-main-app">
     <v-navigation-drawer
       v-model="drawer"
-      width="350"
+      width="22rem"
       fixed
-      class="mt-14"
-      :mini-variant="breakPoint === 'xs'"
-      mini-variant-width="80"
+      class="mt-56"
+      :mini-variant="mini"
+      mini-variant-width="5rem"
       disable-resize-watcher
     >
-      <v-card-title class="font-weight-black navleft-header">
-        Message
-        <v-spacer />
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn outlined icon text class="mr-3">
-              <v-icon v-bind="attrs" v-on="on">mdi-cog-outline</v-icon>
-            </v-btn>
-          </template>
-          <span>{{ $t('common.setting') }}</span>
-        </v-tooltip>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn outlined icon text>
-              <v-icon v-bind="attrs" v-on="on">
-                mdi-pencil-circle-outline
-              </v-icon>
-            </v-btn>
-          </template>
-          <span>New message</span>
-        </v-tooltip>
-      </v-card-title>
-      <v-divider></v-divider>
+      <template v-slot:prepend>
+        <v-toolbar class="font-weight-black elevation-0" v-if="!mini">
+          Message
+          <v-spacer />
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn outlined icon text class="mr-3" v-bind="attrs" v-on="on">
+                <v-icon>mdi-cog-outline</v-icon>
+              </v-btn>
+            </template>
+            <span>{{ $t('common.setting') }}</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                outlined
+                icon
+                text
+                v-bind="attrs"
+                v-on="on"
+                :to="{ name: 'MessageNew' }"
+              >
+                <v-icon>mdi-lead-pencil</v-icon>
+              </v-btn>
+            </template>
+            <span>New message</span>
+          </v-tooltip>
+          <v-btn class="ml-3" icon @click.stop="mini = !mini">
+            <v-icon>mdi-chevron-left</v-icon>
+          </v-btn>
+        </v-toolbar>
+        <v-toolbar v-else>
+          <v-btn x-large class="mx-auto" icon @click.stop="mini = !mini">
+            <v-icon>mdi-chevron-right</v-icon>
+          </v-btn>
+        </v-toolbar>
+        <v-toolbar class="elevation-0">
+          <v-btn
+            class="grey lighten-3 mr-1 ml-0"
+            icon
+            text
+            small
+            @click="onBlurSearch"
+            v-if="selectSearch"
+          >
+            <v-icon>mdi-arrow-left</v-icon>
+          </v-btn>
+          <v-text-field
+            v-model="search"
+            rounded
+            class="grey lighten-3"
+            label="Search"
+            single-line
+            hide-details
+            large
+            @focus="onEmitSearch"
+          >
+            <template v-slot:prepend-inner>
+              <v-icon class="ml-n4">mdi-magnify</v-icon>
+            </template>
+          </v-text-field>
+        </v-toolbar>
+        <v-divider />
+      </template>
 
-      <v-skeleton-loader
-        v-if="loading"
-        v-bind="attrs"
-        type="list-item-avatar@3"
-        class="mt-16"
-      ></v-skeleton-loader>
-      <v-list class="mt-13">
-        <v-list-item
-          v-for="room in rooms"
-          :key="`room-${room.id}`"
-          link
-          :to="{ name: 'Room', params: { room_id: room.id } }"
-          active-class="primary--text"
-        >
-          <v-list-item-icon>
-            <v-avatar class="avatar-outlined">
-              <v-img :src="room.user_with.profile_photo_path" />
-            </v-avatar>
-          </v-list-item-icon>
+      <!-- Slider Body -->
+      <transition name="slide-fade">
+        <!-- loading -->
+        <div v-if="loading" class="text-center">
+          <v-progress-circular
+            :size="70"
+            :width="3"
+            color="purple"
+            indeterminate
+            class="mt-10"
+          ></v-progress-circular>
+        </div>
 
-          <v-list-item-content>
-            <v-list-item-title class="font-weight-bold text-capitalize">{{
-              room.user_with.name
-            }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-
-    <v-navigation-drawer
-      v-model="drawer"
-      fixed
-      class="mt-112 index-3"
-      width="300"
-      right
-    >
-      <v-list>
-        <v-list-item v-for="n in 50" :key="n" link>
-          <v-list-item-content>
-            <v-list-item-title>Item {{ n }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-
-    <v-main class="grey">
-      <v-container fluid>
-        <v-row>
-          <v-col cols="2" md="1" class="yellow">
-            <v-card
-              v-if="!drawer"
-              width="70"
-              height="80%"
-              class="fixed-avatar-card mt-n10 scroll-avatar-card ml-n6"
-              tile
+        <!-- Display when user selected the search text feild -->
+        <div v-else-if="selectSearch" class="text-center">
+          <!-- loading -->
+          <v-progress-circular
+            :size="70"
+            :width="3"
+            color="purple"
+            indeterminate
+            class="mt-10"
+            v-if="loadingSearch"
+          />
+          <v-container v-else-if="friends.length" class="text-left">
+            <span class="ml-3 text-secondary font-weight-bold">
+              {{ $t('Friends') }}
+            </span>
+            <v-btn
+              class="rounded-lg text-capitalize font-weight-bold"
+              v-for="friend in friends"
+              x-large
+              block
+              text
+              :key="`search-result ${friend.id}`"
+              @click="onClickSearchResult(friend.user_friend)"
             >
-              <v-card-title class="fixed-avatar-card white lighten-3">
-                <v-btn icon class="grey lighten-2">
-                  <v-icon>mdi-pencil</v-icon>
-                </v-btn>
-              </v-card-title>
-              <v-divider></v-divider>
-              <v-card-text class="mt-14">
-                hiep
-                <a v-for="n in 45" :key="`asd-${n}`"> 123123 </a>
-                <a>bottm</a>
-              </v-card-text>
-            </v-card>
-          </v-col>
-          <v-col cols="10" md="10" class="ml-6 mt-2">
-            <v-card tile class="mt-n10">
-              <router-view />
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
+              <v-avatar class="avatar-outlined ml-n2 mr-3" size="30">
+                <img :src="friend.user_friend.profile_photo_path" />
+              </v-avatar>
+              {{ friend.user_friend.name }}
+              <v-spacer />
+            </v-btn>
+          </v-container>
+          <div v-else class="text-caption">
+            {{ $t('Sorry, your search not match any result!') }}
+          </div>
+        </div>
+
+        <!-- display the list of message when not select search -->
+        <v-container v-else-if="currentUser" class="navleft-body mt-0">
+          <v-btn
+            v-for="room in threshes"
+            :key="`btn-room-${room.id}`"
+            block
+            height="4rem"
+            text
+            :to="{ name: 'MessageRoom', params: { room_id: room.id } }"
+            active-class="primary--text"
+            class="text-none mt-1"
+          >
+            <template v-if="room.type === 'private'">
+              <v-list-item-icon>
+                <v-avatar class="avatar-outlined" size="50">
+                  <img :src="currentUser.profile_photo_path" />
+                </v-avatar>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title
+                  class="font-weight-bold text-capitalize black--text"
+                >
+                  {{ currentUser.name }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ $t('You') }} : {{ room.last_message.content }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </template>
+            <template v-else-if="room.type === 'with'">
+              <v-list-item-icon>
+                <v-avatar class="avatar-outlined" size="50">
+                  <template v-for="participant in room.participants">
+                    <img
+                      :key="`avatar-${participant.id}`"
+                      v-if="participant.user_id !== currentUser.id"
+                      :src="participant.user.profile_photo_path"
+                    />
+                  </template>
+                </v-avatar>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title
+                  class="font-weight-bold black--text"
+                  v-for="participant in room.participants"
+                  :key="`name-${participant.id}`"
+                >
+                  <span v-if="participant.user_id !== currentUser.id">
+                    {{ participant.user.name }}
+                  </span>
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{
+                    room.last_message.user_id === currentUser.id
+                      ? $t('You')
+                      : room.last_message.user.name
+                  }}
+                  : {{ room.last_message.content }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </template>
+          </v-btn>
+        </v-container>
+      </transition>
+    </v-navigation-drawer>
+
+    <v-main :class="classesMain">
+      <router-view :convert="!mini" @onConvert="mini = !mini" />
     </v-main>
-  </v-app>
+  </div>
 </template>
 
 <script>
 import MessageNav from '@/components/Layout/MessageNav'
 import { mapActions, mapGetters } from 'vuex'
+import Observer from '@/components/Observer'
+import axios from 'axios'
 
 export default {
   components: {
-    'nav-bar': MessageNav
+    'nav-bar': MessageNav,
+    Observer
   },
   mounted() {
-    if (!this.rooms.length) this.fetchRoom()
+    if (!this.threshes.length) this.fetchThresh()
   },
   data() {
     return {
@@ -160,32 +215,81 @@ export default {
       drawer: true,
       loading: false,
       error: null,
-      links: []
+      links: [],
+      search: '',
+      loadingSearch: true,
+      selectSearch: false,
+      errorSearch: null,
+      mini: false,
+      convert: true,
+      friends: []
     }
   },
   computed: {
     ...mapGetters('message', ['rooms', 'messages']),
-    classes() {
-      return this.drawer ? 'ml-350 mt-14' : 'ml-0 mt-14'
-    },
-    classBottom() {
-      return this.drawer ? 'ml-350 mr-300' : 'ml-80 mr-0'
-    },
+    ...mapGetters('thresh', ['threshes']),
+    ...mapGetters('user', ['currentUser']),
     breakPoint() {
       return this.$vuetify.breakpoint.name
+    },
+    classesMain() {
+      return this.mini ? 'ml-80' : 'ml-350 mr-300'
+    },
+    userParticipant(participants) {
+      return participants.forEach(
+        participant => participant.user_id !== this.currentUser.id
+      )
     }
   },
   methods: {
     ...mapActions('message', ['getRoom', 'getMessage']),
-    async fetchRoom() {
+    ...mapActions('thresh', ['getThreshes', 'setThreshPage']),
+    async fetchThresh() {
       this.loading = true
       this.error = null
       try {
-        await this.getRoom()
+        await this.getThreshes()
       } catch (err) {
-        this.error = err.toString()
+        this.error = err.response.data.message
       }
       this.loading = false
+    },
+    async fetchFriend(searchKey) {
+      this.loadingSearch = true
+      try {
+        const response = await axios.post('/v1/user/friend/get', {
+          search_key: searchKey
+        })
+        this.friends = response.data.data
+      } catch (err) {
+        this.errorSearch = err.response.data.message
+      }
+      this.loadingSearch = false
+    },
+    onEmitSearch() {
+      this.selectSearch = true
+      this.fetchFriend()
+    },
+    onBlurSearch() {
+      this.selectSearch = false
+      this.friends = []
+    },
+    onClickOption(roomId) {
+      console.log(roomId)
+    },
+    intersected() {
+      this.fetchThresh()
+    },
+    convertInfo() {
+      this.convert = !this.convert
+    },
+    onClickSearchResult(user) {
+      console.log(user)
+    }
+  },
+  watch: {
+    async search(value) {
+      this.fetchFriend(value)
     }
   }
 }
@@ -193,21 +297,25 @@ export default {
 
 <style>
 .ml-350 {
-  margin-left: 350px;
+  margin-left: 22rem;
 }
 
 .mr-300 {
-  margin-right: 300px;
+  margin-right: 22rem;
 }
 .mt-112 {
   margin-top: 112px;
 }
 .ml-80 {
-  margin-left: 70px;
+  margin-left: 5rem;
 }
 .fixed-avatar-card {
   position: fixed;
   z-index: 3;
+}
+
+.mt-56 {
+  padding-top: 56px;
 }
 .index-100 {
   z-index: 100;
@@ -219,5 +327,59 @@ export default {
 .navleft-header {
   position: fixed;
   width: 350px;
+  z-index: 100;
+}
+
+.navleft-body {
+  position: absolute;
+  overflow: hidden;
+  bottom: 0px;
+  top: 185px;
+}
+
+.navleft-body:hover {
+  overflow: auto;
+}
+
+.navleft-body::-webkit-scrollbar {
+  width: 0.35rem;
+}
+
+.navleft-body::-webkit-scrollbar-track {
+  background: white;
+  -webkit-border-radius: 10px;
+  border-radius: 25px;
+  padding: 10px;
+}
+
+.navleft-body::-webkit-scrollbar-thumb {
+  background: #9e9e9e;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+}
+
+.message-container {
+  margin-right: 22rem;
+  margin-left: 22rem;
+}
+
+.message-main-app {
+  position: absolute;
+  width: 100%;
+  top: 0px;
+  left: 0px;
+  z-index: 1;
+}
+
+.slide-fade-enter-active {
+  transition: all 0.3s ease;
+}
+.slide-fade-leave-active {
+  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateX(10px);
+  opacity: 0;
 }
 </style>

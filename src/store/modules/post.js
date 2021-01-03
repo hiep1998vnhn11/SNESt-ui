@@ -31,7 +31,6 @@ const actions = {
     }
   },
   setFeedPage({ commit }) {
-    console.log('Change feed')
     commit('SET_FEED_PAGE')
   },
   async getParamPost({ commit }, postId) {
@@ -39,13 +38,11 @@ const actions = {
     commit('SET_PARAM_POST', paramPostResponse.data.data)
   },
   async createPost({ commit }, post) {
-    console.log(post)
     const response = await axios.post(`v1/user/post/create`, post, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     })
-    console.log(response.data)
     commit('CREATE_POST', response.data.data)
   },
   async deletePost({ commit }, postId) {

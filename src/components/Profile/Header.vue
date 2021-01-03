@@ -138,11 +138,7 @@
         <button-show-more></button-show-more>
 
         <v-spacer></v-spacer>
-
-        <v-btn v-if="current" outlined class="text-capitalize mt-3 ml-2" text>
-          <v-icon class="mr-2">mdi-pencil</v-icon>
-          {{ $t('profile.EditProfile') }}
-        </v-btn>
+        <edit-profile v-if="current" />
         <v-btn
           :loading="loadingAddFriend"
           :disabled="loadingAddFriend"
@@ -470,6 +466,7 @@ import Preview from './Preview'
 import { mapGetters } from 'vuex'
 import axios from 'axios'
 import { VueAvatar } from 'vue-avatar-editor-improved'
+import EditProfile from './EditProfile'
 
 export default {
   props: ['user', 'loading'],
@@ -505,7 +502,8 @@ export default {
     'button-show-more': MoreButton,
     'change-background': ChangeBackground,
     VueAvatar,
-    'avatar-preview': Preview
+    'avatar-preview': Preview,
+    EditProfile
   },
   computed: {
     background() {
@@ -521,7 +519,8 @@ export default {
     displayStory() {
       return true
     },
-    ...mapGetters('user', ['currentUser'])
+    ...mapGetters('user', ['currentUser']),
+    ...mapGetters('socket', ['socket'])
   },
   methods: {
     onRemoveChange() {
@@ -565,9 +564,14 @@ export default {
           user_url: this.user.url,
           relationship: 'friend'
         }
-        await axios.post(url, params)
+        const response = await axios.post(url, params)
         this.addFriendStatus = true
         this.$emit('changed-status-friend-added')
+        this.socket.emit('requestAddFriend', {
+          userId: this.user.id,
+          requestUserId: this.currentUser.id,
+          data: response.data.data
+        })
       } catch (err) {
         this.error = err.toString()
       }

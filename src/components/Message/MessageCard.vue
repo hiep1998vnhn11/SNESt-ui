@@ -1,42 +1,49 @@
 <template>
   <v-card
-    class="message-card-component"
+    :class="`message-card-component message-card_${location} rounded-lg`"
     v-click-outside="{
       handler: onClickOutsideWithConditional,
       closeConditional,
     }"
     :ripple="false"
+    height="450"
     @keydown.esc="test"
-    v-if="!!currentUser"
+    @click="clickCard"
+    v-if="!!currentUser && user"
     :loading="loading"
   >
     <v-toolbar dense color="elevation-0">
-      <v-badge
-        bordered
-        bottom
-        color="deep-purple accent-4"
-        dot
-        offset-x="10"
-        offset-y="10"
-        class="ml-n2"
-        v-if="onlineStatus.status"
-      >
-        <v-avatar size="40">
-          <v-img :src="currentUser.profile_photo_path"></v-img>
+      <v-btn text large class="ml-n3 text-none" v-if="user">
+        <v-badge
+          bordered
+          bottom
+          color="deep-purple accent-4"
+          dot
+          offset-x="10"
+          offset-y="10"
+          class="ml-n9"
+          v-if="user.online_status.status"
+        >
+          <v-avatar size="40" class="avatar-outlined">
+            <v-img :src="user.profile_photo_path"></v-img>
+          </v-avatar>
+        </v-badge>
+        <v-avatar v-else size="40" class="avatar-outlined ml-n9">
+          <v-img :src="user.profile_photo_path"></v-img>
         </v-avatar>
-      </v-badge>
-      <v-avatar v-else size="40">
-        <v-img :src="currentUser.profile_photo_path"></v-img>
-      </v-avatar>
-      <v-col class="mb-n1" cols="5">
-        <div class="font-weight-bold mb-n2">
-          {{ currentUser.name | onlyName }}
-        </div>
-        <span class="text-caption" v-if="onlineStatus.status">Active now</span>
-        <span class="text-caption" v-else>
-          {{ onlineStatus | relativeTime }}
-        </span>
-      </v-col>
+        <v-col class="mb-n1" cols="5">
+          <div class="font-weight-bold mb-0">
+            {{ user.name | onlyName }}
+          </div>
+          <span class="text-caption" v-if="user.online_status.status">
+            Active now
+          </span>
+          <span class="text-caption" v-else>
+            {{ user.online_status | relativeTime }}
+          </span>
+        </v-col>
+      </v-btn>
+
       <v-spacer />
       <v-btn icon small class="mr-2">
         <v-icon :color="selected ? 'primary' : ''">mdi-video</v-icon>
@@ -47,18 +54,50 @@
       <v-btn icon small class="mr-2">
         <v-icon :color="selected ? 'primary' : ''">mdi-minus</v-icon>
       </v-btn>
-      <v-btn icon small @click="$emit('on-close')">
+      <v-btn icon small @click="closeMessageCard(location)">
         <v-icon :color="selected ? 'primary' : ''">mdi-close</v-icon>
       </v-btn>
     </v-toolbar>
     <v-divider />
-    <v-card-text class="message-card-text-component" id="container">
-      <message-row
-        v-for="message in messages"
-        :key="`message-${message.id}-${message.created_at}`"
-        :message="message"
-        :active="true"
-      />
+    <v-card-text
+      class="message-card-text-component text--primary"
+      id="container"
+    >
+      <v-container v-if="loading" class="text-center">
+        <v-progress-circular
+          :size="40"
+          :width="2"
+          color="purple"
+          indeterminate
+        ></v-progress-circular>
+      </v-container>
+      <div v-else-if="messages.length">
+        <message-row
+          v-for="(message, index) in reverseMessages"
+          :key="`message-${message.id}-${message.created_at}`"
+          :message="message"
+          :same="
+            messages[index + 1]
+              ? message.user_id !== messages[index + 1].user_id
+              : true
+          "
+          :user="user"
+        />
+      </div>
+      <div v-else class="text-center">
+        <div>
+          <v-avatar class="avatar-outlined" size="100">
+            <img :src="user.profile_photo_path" />
+          </v-avatar>
+        </div>
+        <div class="font-weight-bold text-body-1">
+          {{ user.name }}
+        </div>
+        <div class="text-body-2">
+          {{ $t('FriendOnMessage') }}
+        </div>
+        <div>{{ $t('Write something with') }} {{ user.name | onlyName }}</div>
+      </div>
     </v-card-text>
     <v-card-actions>
       <v-btn icon small>
@@ -94,57 +133,95 @@
 </template>
 
 <script>
+import Axios from 'axios'
 import { mapGetters, mapActions } from 'vuex'
 import MessageRow from './MessageRow'
+
 export default {
   computed: {
     ...mapGetters('user', ['currentUser']),
-    ...mapGetters('message', ['messages'])
+    ...mapGetters('socket', ['socket']),
+    reverseMessages() {
+      return this.messages.slice().reverse()
+    }
   },
   components: {
     MessageRow
   },
-  props: ['roomId', 'onlineStatus'],
+  props: ['roomId', 'location'],
   data() {
     return {
       text: '',
       selected: false,
       active: true,
       loading: false,
-      error: null
+      error: null,
+      roomID: null,
+      messages: [],
+      user: null
     }
   },
   methods: {
-    ...mapActions('message', ['getMessage', 'sendMessage']),
+    ...mapActions('message', ['getMessage', 'sendMessage', 'closeMessageCard']),
     onClickOutsideWithConditional() {
       this.selected = false
     },
     closeConditional(e) {
       return this.selected
     },
-    fetchData() {
+    async fetchData() {
       this.loading = true
       try {
-        this.getMessage(this.roomId)
+        let user = await Axios.post(
+          `/v1/user/thresh/${this.roomId}/participant/get`
+        )
+        this.user = user.data.data
+        let response = await Axios.get(
+          `/v1/user/thresh/${this.roomId}/message/get`,
+          {
+            params: {
+              page: 1,
+              limit: 25
+            }
+          }
+        )
+        this.messages = response.data.data.data
       } catch (err) {
-        this.error = err.toString()
+        console.log(err.response.data.message)
       }
+      this.socket.on(
+        'receiptMessage',
+        ({ userId, roomId, message, userName }) => {
+          if (roomId === this.roomId) this.messages.unshift(message)
+        }
+      )
       this.loading = false
     },
     async onSendMessage() {
       if (this.text) {
-        this.loading = true
-        try {
-          await this.sendMessage({
+        const message = {
+          id: Math.random(),
+          thresh_id: this.roomId,
+          user_id: this.currentUser.id,
+          content: this.text
+        }
+        if (this.user.id !== this.currentUser.id) {
+          this.socket.emit('sendToUser', {
+            userId: this.user.id,
             roomId: this.roomId,
-            content: this.text,
-            user_id: this.currentUser.id
+            message: message,
+            userName: this.user.name
+          })
+        }
+        this.messages.unshift(message)
+        try {
+          await Axios.post(`/v1/user/thresh/${this.roomId}/message/send`, {
+            content: this.text
           })
           this.text = ''
         } catch (err) {
-          this.error = err.toString()
+          this.error = err.response.data.message
         }
-        this.loading = false
       }
     },
     scrollToBottom() {
@@ -160,11 +237,10 @@ export default {
     }
   },
   mounted() {
-    this.scrollToBottom()
     this.fetchData()
   },
   updated() {
-    this.scrollToBottom()
+    if (!this.loading) this.scrollToBottom()
   }
 }
 </script>
@@ -174,13 +250,33 @@ export default {
   position: fixed;
   z-index: 3;
   bottom: 5px;
-  right: 5px;
-  width: 328px;
+  width: 330px;
 }
 
 .message-card-text-component {
-  overflow-y: scroll;
+  overflow-y: hidden;
   height: 350px;
+}
+
+.message-card-text-component:hover {
+  overflow-y: auto;
+}
+
+.message-card-text-component::-webkit-scrollbar {
+  width: 0.35rem;
+}
+
+.message-card-text-component::-webkit-scrollbar-track {
+  background: white;
+  -webkit-border-radius: 10px;
+  border-radius: 25px;
+  padding: 10px;
+}
+
+.message-card-text-component::-webkit-scrollbar-thumb {
+  background: #9c27b0;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
 }
 
 .active-now-icon {

@@ -1,21 +1,21 @@
 <template>
   <v-col md="8" offset-md="2">
     <post-create :loading="loading_user" class="mt-n12"></post-create>
-
-    <div class="mt-3">
+    <div class="mt-3" v-if="posts.length">
       <post-component
         class="mt-3"
         v-for="post in posts"
         :key="post.creadted"
         :post="post"
       ></post-component>
+      <observer @intersect="intersected"></observer>
     </div>
+    <div v-else>Not have</div>
     <v-skeleton-loader
       v-if="loading"
       class="mx-auto mt-3"
       type="card"
     ></v-skeleton-loader>
-    <observer @intersect="intersected"></observer>
   </v-col>
 </template>
 

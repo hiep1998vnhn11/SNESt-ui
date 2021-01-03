@@ -80,7 +80,7 @@
       </v-tooltip>
 
       <create-button />
-      <message-button />
+      <message-button v-if="!$route.name.includes('Message')" />
       <notification-button />
       <setting-button />
     </v-app-bar>
@@ -96,7 +96,7 @@
 
       <v-spacer />
       <create-button />
-      <message-button />
+      <message-button v-if="!$route.name.includes('Message')" />
       <notification-button />
       <setting-button />
     </v-app-bar>

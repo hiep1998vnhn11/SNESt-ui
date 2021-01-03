@@ -101,7 +101,7 @@
           <v-badge
             bordered
             bottom
-            :color="friend.user_friend.onlineStatus.status ? 'green' : 'grey'"
+            :color="friend.user_friend.online_status.status ? 'green' : 'grey'"
             dot
             offset-x="20"
             offset-y="10"
@@ -131,7 +131,7 @@
           <v-badge
             bordered
             bottom
-            :color="room.user_with.onlineStatus.status ? 'green' : 'grey'"
+            :color="room.user_with.online_status.status ? 'green' : 'grey'"
             dot
             offset-x="20"
             offset-y="10"
@@ -171,7 +171,7 @@
       v-if="!!selectedMessage"
       :room-id="selectedMessage"
       @on-close="selectedMessage = null"
-      :onlineStatus="rooms[0].user_with.onlineStatus"
+      :onlineStatus="rooms[0].user_with.online_status"
     />
   </div>
 </template>
@@ -221,7 +221,7 @@ export default {
     }
   },
   mounted() {
-    setInterval(this.fetchData(), 1000 * 60 * 3)
+    this.fetchData()
   }
 }
 </script>
@@ -229,5 +229,17 @@ export default {
 <style>
 .index-3 {
   z-index: 3;
+}
+
+.home-navbar-right::-webkit-scrollbar {
+  width: 0.25rem;
+}
+
+.home-navbar-right::-webkit-scrollbar-track {
+  background: white;
+}
+
+.home-navbar-right::-webkit-scrollbar-thumb {
+  background: #0077ff;
 }
 </style>

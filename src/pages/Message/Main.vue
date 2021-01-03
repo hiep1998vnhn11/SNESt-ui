@@ -1,11 +1,18 @@
 <template>
-  <div>
-    Mainmessage
-  </div>
+  <v-container>
+    <not-message />
+  </v-container>
 </template>
 
 <script>
-export default {}
+import NotMessage from '@/components/page/NotMessage'
+
+export default {
+  components: {
+    NotMessage
+  },
+  mounted() {}
+}
 </script>
 
 <style></style>
