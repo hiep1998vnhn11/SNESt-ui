@@ -2,7 +2,7 @@
   <v-card class="mx-auto rounded-lg">
     <v-list-item>
       <router-link
-        :to="{ name: 'MainProfile', params: { url: post.user.url } }"
+        :to="{ name: 'user-url', params: { url: post.user.url } }"
         v-slot="{ href, navigate }"
       >
         <v-list-item-avatar class="avatar-outlined" color="grey">

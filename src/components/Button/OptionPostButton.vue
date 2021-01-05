@@ -107,7 +107,7 @@
         <v-card
           v-click-outside="{
             handler: onClickOutsideWithConditional,
-            closeConditional,
+            closeConditional
           }"
           v-show="expand"
           width="350"
@@ -121,8 +121,8 @@
               block
               active-class="blue lighten-3"
               :to="{
-                name: 'MainProfile',
-                params: { url: post.user.url },
+                name: 'user-url',
+                params: { url: post.user.url }
               }"
               v-if="!owned"
             >

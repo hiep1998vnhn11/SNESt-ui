@@ -29,7 +29,7 @@
               class="text-capitalize"
               block
               text
-              :to="{ name: 'MainProfile' }"
+              :to="{ name: 'user-url' }"
               active-class="primary--text"
             >
               <v-icon class="mr-3">mdi-view-list</v-icon>

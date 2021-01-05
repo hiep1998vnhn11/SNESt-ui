@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-app-bar fixed :class="classes" flat height="64" outlined>
+    <v-app-bar absolute flat height="64" outlined>
       <span>{{ $t('To:') }}</span>
       <div
         v-click-outside="{
@@ -100,13 +100,7 @@ export default {
       return this.focus
     }
   },
-  props: ['convert'],
   mounted() {},
-  computed: {
-    classes() {
-      return this.convert ? 'ml-350 mt-14' : 'ml-80 mt-14'
-    }
-  },
   watch: {
     async search(val) {
       if (!val || this.loading) return

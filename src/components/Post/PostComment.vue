@@ -43,7 +43,7 @@
           <v-col cols="1">
             <router-link
               :to="{
-                name: 'MainProfile',
+                name: 'user-url',
                 params: { url: comment.user.url }
               }"
               v-slot="{ href, navigate }"
@@ -106,7 +106,7 @@
                 <v-col cols="1">
                   <router-link
                     :to="{
-                      name: 'MainProfile',
+                      name: 'user-url',
                       params: { url: sub_comment.user.url }
                     }"
                     v-slot="{ href, navigate }"

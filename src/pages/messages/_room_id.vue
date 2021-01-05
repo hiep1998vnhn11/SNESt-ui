@@ -154,7 +154,7 @@
           <div class="font-weight-bold text-capitalize mt-2">
             <router-link
               :to="{
-                name: 'MainProfile',
+                name: 'user-url',
                 params: { url: participant.url }
               }"
               class="black--text text-decoration-none"

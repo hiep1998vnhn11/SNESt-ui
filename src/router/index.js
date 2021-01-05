@@ -15,8 +15,6 @@ import AccountSetting from '@/pages/Setting/Account'
 import PrivacySetting from '@/pages/Setting/Privacy'
 import SecuritySetting from '@/pages/Setting/Security'
 
-import MainMessage from '@/pages/Message/Main'
-
 import login from '@/pages/login'
 import messages from '@/pages/messages'
 import messagesNew from '@/pages/messages/new'
@@ -32,6 +30,8 @@ import UserUrlImage from '@/pages/user/_url/image'
 
 import postPostId from '@/pages/post/_post_id'
 
+import data from './middleware/data'
+
 Vue.use(Router)
 
 export default new Router({
@@ -40,7 +40,8 @@ export default new Router({
       path: '/',
       component: Main,
       meta: {
-        requiresAuth: true
+        requiresAuth: true,
+        middleware: data
       },
       children: [
         {
@@ -154,15 +155,11 @@ export default new Router({
         {
           path: 'messages',
           component: messages,
+          name: 'messages',
           meta: {
             requiresAuth: true
           },
           children: [
-            {
-              path: '',
-              name: 'Message',
-              component: MainMessage
-            },
             {
               path: 'new',
               name: 'messages-new',

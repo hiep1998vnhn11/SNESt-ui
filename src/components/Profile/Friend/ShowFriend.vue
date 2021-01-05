@@ -19,7 +19,7 @@
         <v-row class="pa-6">
           <router-link
             :to="{
-              name: 'MainProfile',
+              name: 'user-url',
               params: { url: friend.user_friend.url }
             }"
           >
@@ -31,7 +31,7 @@
             <div class="font-weight-bold">
               <router-link
                 :to="{
-                  name: 'MainProfile',
+                  name: 'user-url',
                   params: { url: friend.user_friend.url }
                 }"
                 style="text-decoration: none; color: black;"

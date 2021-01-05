@@ -351,7 +351,7 @@
             text
             class="text-capitalize primary--text"
             @click="dialog = false"
-            :to="{ name: 'AboutProfile' }"
+            :to="{ name: 'user-url-about' }"
           >
             Update your infomation
           </v-btn>

@@ -256,5 +256,16 @@
   "ChangeEmoji": "Change Emoji",
   "ChangeTheme": "Change Theme",
   "You": "You",
-  "NotAnyResultForSearchKey": "Not Any Result For Search Key"
+  "NotAnyResultForSearchKey": "Not Any Result For Search Key",
+  "Online": "Online",
+  "Contact": "Contact",
+  "Groups": "Groups",
+  "Avatar": "Avatar",
+  "Edit": "Edit",
+  "BackgroundImage": "Background image",
+  "Story": "Story",
+  "CustomizeYourIntro": "Customize your introduction",
+  "Delete this post": "Delete this post",
+  "Delete post": "Delete post",
+  "Are you sure to delete this post?": "Are you sure to delete this post?"
 }

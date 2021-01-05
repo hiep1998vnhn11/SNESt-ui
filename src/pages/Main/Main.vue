@@ -1,10 +1,9 @@
 <template>
   <div>
-    <app-bar :loading="loading" :error="error"></app-bar>
     <v-container>
       <router-view :loading="loading" />
     </v-container>
-    <div v-if="!$route.name.includes('Message')">
+    <div v-if="!$route.name.includes('messages')">
       <div v-for="(card, index) in messageCards" :key="`message-card-${index}`">
         <new-message
           v-if="card && card === 'new'"

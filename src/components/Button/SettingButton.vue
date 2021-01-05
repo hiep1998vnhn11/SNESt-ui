@@ -106,7 +106,7 @@
           v-show="expand"
           v-click-outside="{
             handler: onClickOutsideWithConditional,
-            closeConditional,
+            closeConditional
           }"
           width="21rem"
           class="mx-auto"
@@ -119,7 +119,7 @@
               height="75"
               block
               active-class="primary--text"
-              :to="{name: 'MainProfile',params: { url: currentUser.url }}"
+              :to="{ name: 'user-url', params: { url: currentUser.url } }"
             >
               <v-avatar class="mr-3 avatar-outlined" size="60">
                 <img :src="currentUser.profile_photo_path" />

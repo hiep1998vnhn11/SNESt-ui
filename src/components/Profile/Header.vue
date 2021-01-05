@@ -75,7 +75,7 @@
               label="Description about you"
               v-model="story"
               counter="105"
-              :rules="[(v) => v.length <= 105 || 'Too long']"
+              :rules="[v => v.length <= 105 || 'Too long']"
             />
           </v-container>
           <v-card-actions>
@@ -110,7 +110,7 @@
           large
           text
           class="text-capitalize mr-2 mt-3"
-          :to="{ name: 'MainProfile' }"
+          :to="{ name: 'user-url' }"
           active-class="primary--text"
           exact
         >
@@ -120,7 +120,7 @@
           large
           text
           class="text-capitalize mr-2 mt-3"
-          :to="{ name: 'AboutProfile' }"
+          :to="{ name: 'user-url-about' }"
           active-class="primary--text"
         >
           {{ $t('profile.About') }}
@@ -129,7 +129,7 @@
           large
           text
           class="text-capitalize mt-3 mr-2"
-          :to="{ name: 'FriendProfile' }"
+          :to="{ name: 'user-url-friend' }"
           active-class="primary--text"
         >
           {{ $t('profile.Friends') }}

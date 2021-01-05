@@ -4,7 +4,7 @@
       <v-hover v-slot:default="{ hover }" :key="`room-${room.id}`">
         <v-list-item
           link
-          :to="{ name: 'MessageRoom', params: { room_id: room.id } }"
+          :to="{ name: 'messages-room_id', params: { room_id: room.id } }"
           active-class="blue--text"
         >
           <template v-if="room.type === 'private'">
@@ -84,5 +84,4 @@ export default {
 }
 </script>
 
-<style>
-</style>
+<style></style>

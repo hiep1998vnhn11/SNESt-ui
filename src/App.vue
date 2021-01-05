@@ -185,6 +185,9 @@ export default {
       mini: false
     }
   },
+  created() {
+    if (!this.friends.length) this.fetchData()
+  },
   computed: {
     ...mapGetters('user', ['currentUser', 'friends', 'isLoggedIn']),
     ...mapGetters('socket', ['socket'])
@@ -202,7 +205,6 @@ export default {
       this.loading = true
       this.error = null
       try {
-        await this.getUser()
         await this.getFriend()
       } catch (err) {
         this.error = err.response.data.message
