@@ -5,6 +5,7 @@ const state = {
   rooms: [],
   messages: [],
   pageMessage: 1,
+  thresh: null,
   messageCards: [],
   messageCard1: [],
   messageCard2: [],
@@ -14,7 +15,8 @@ const state = {
 const getters = {
   rooms: state => state.rooms,
   messages: state => state.messages,
-  messageCards: state => state.messageCards
+  messageCards: state => state.messageCards,
+  thresh: state => state.thresh
 }
 const actions = {
   async getRoom({ commit }) {
@@ -58,6 +60,18 @@ const actions = {
   },
   setMessagePage({ commit }) {
     commit('SET_PAGE_MESSAGE')
+  },
+  async setThreshCard({ commit }, user) {
+    const response = await axios.post(`/v1/user/thresh/${user.id}/get`)
+    if (response.data.data) {
+      commit('SET_THRESH_CARD', { room: response.data.data })
+    } else {
+      commit('SET_THRESH_CARD', {
+        room: {
+          user_with: user
+        }
+      })
+    }
   }
 }
 const mutations = {
@@ -106,6 +120,9 @@ const mutations = {
     if (app.$route.params.room_id === message.thresh_id) {
       state.messages.unshift(message)
     }
+  },
+  SET_THRESH_CARD: function(state, thresh) {
+    state.thresh = thresh
   }
 }
 export default {

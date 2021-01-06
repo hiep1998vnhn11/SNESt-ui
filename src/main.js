@@ -47,7 +47,7 @@ router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!store.getters['user/isLoggedIn']) {
       next({
-        name: 'Login'
+        name: 'login'
       })
     } else next()
   } else if (to.matched.some(record => record.meta.requiresVisitor)) {

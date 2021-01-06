@@ -1,17 +1,18 @@
 <template>
   <v-card
-    :class="`message-card-component message-card_${location} rounded-lg`"
+    class="message-card-component message-card_0 rounded-lg"
     v-click-outside="{
       handler: onClickOutsideWithConditional,
-      closeConditional,
+      closeConditional
     }"
     :ripple="false"
     height="450"
     @keydown.esc="test"
     @click="clickCard"
-    v-if="!!currentUser && user"
+    v-if="currentUser"
     :loading="loading"
   >
+    {{ thresh }}
     <v-toolbar dense color="elevation-0">
       <v-btn text large class="ml-n3 text-none" v-if="user">
         <v-badge
@@ -141,6 +142,7 @@ export default {
   computed: {
     ...mapGetters('user', ['currentUser']),
     ...mapGetters('socket', ['socket']),
+    ...mapGetters('message', ['thresh']),
     reverseMessages() {
       return this.messages.slice().reverse()
     }
@@ -148,7 +150,7 @@ export default {
   components: {
     MessageRow
   },
-  props: ['roomId', 'location'],
+  props: ['user', 'thresh'],
   data() {
     return {
       text: '',
@@ -156,9 +158,7 @@ export default {
       active: true,
       loading: false,
       error: null,
-      roomID: null,
-      messages: [],
-      user: null
+      messages: []
     }
   },
   methods: {
@@ -172,12 +172,8 @@ export default {
     async fetchData() {
       this.loading = true
       try {
-        let user = await Axios.post(
-          `/v1/user/thresh/${this.roomId}/participant/get`
-        )
-        this.user = user.data.data
         let response = await Axios.get(
-          `/v1/user/thresh/${this.roomId}/message/get`,
+          `/v1/user/thresh/${this.thresh.id}/message/get`,
           {
             params: {
               page: 1,
@@ -189,12 +185,6 @@ export default {
       } catch (err) {
         console.log(err.response.data.message)
       }
-      this.socket.on(
-        'receiptMessage',
-        ({ userId, roomId, message, userName }) => {
-          if (roomId === this.roomId) this.messages.unshift(message)
-        }
-      )
       this.loading = false
     },
     async onSendMessage() {

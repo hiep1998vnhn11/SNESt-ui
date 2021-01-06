@@ -4,27 +4,15 @@
       <router-view :loading="loading" />
     </v-container>
     <div v-if="!$route.name.includes('messages')">
-      <div v-for="(card, index) in messageCards" :key="`message-card-${index}`">
-        <new-message
-          v-if="card && card === 'new'"
-          :location="index"
-          @click-user="onOpenMessage"
-        />
-        <message-card
-          v-else
-          :location="index"
-          :roomId="card.room.id"
-          :user="card.room.user_with"
-        />
-      </div>
+      <message-card v-if="thresh" :thresh="thresh" :user="user" />
       <v-btn
         class="button-navigation white elevation-20"
         x-large
         icon
         text
-        @click="openNewMessageCard"
+        @click="onOpenMessage({ id: 1 })"
       >
-        <v-icon color="black" v-text="messageIcon"></v-icon>
+        <v-icon v-text="messageIcon"></v-icon>
       </v-btn>
     </div>
   </div>
@@ -35,7 +23,7 @@ import AppBar from '@/components/Layout/AppBar'
 import { mapActions, mapGetters } from 'vuex'
 import NewMessage from '@/components/Message/NewMessage'
 import MessageCard from '@/components/Message/MessageCard'
-import Axios from 'axios'
+import axios from 'axios'
 
 export default {
   components: {
@@ -57,12 +45,17 @@ export default {
     return {
       loading: false,
       error: null,
-      loadingMessageCard: false
+      loadingMessageCard: false,
+      thresh: null
     }
   },
   methods: {
     ...mapActions('user', ['getUser']),
-    ...mapActions('message', ['closeMessageCard', 'newMessage']),
+    ...mapActions('message', [
+      'closeMessageCard',
+      'newMessage',
+      'setThreshCard'
+    ]),
     ...mapActions('socket', ['connectSocket']),
     async fetchUser() {
       this.error = null
@@ -74,33 +67,20 @@ export default {
       }
       this.loading = false
     },
-    openNewMessageCard() {
-      if (this.messageCards.indexOf('new') === -1) {
-        this.newMessage({ type: 'new' })
-      }
-    },
-    async onOpenMessage(friend) {
+    async onOpenMessage(user) {
       this.loadingMessageCard = true
       try {
-        let response = await Axios.post(
-          `/v1/user/thresh/${friend.friend_id}/get`
-        )
+        const response = await axios.post(`/v1/user/thresh/${user.id}/get`)
         if (response.data.data) {
-          this.newMessage({ room: response.data.data })
+          this.thresh = response.data.data
         } else {
-          this.newMessage({
-            room: {
-              user_with: friend.user_friend
-            }
-          })
+          this.thresh = { user_with: user }
         }
       } catch (err) {
-        this.error = err.toString()
+        this.error = err.response.data.message
       }
       this.loadingMessageCard = false
-    },
-    openNewRoomCard() {},
-    openRoomCard() {}
+    }
   },
   async created() {
     if (!this.currentUser) await this.fetchUser()
