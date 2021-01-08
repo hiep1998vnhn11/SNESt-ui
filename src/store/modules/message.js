@@ -6,10 +6,7 @@ const state = {
   messages: [],
   pageMessage: 1,
   thresh: null,
-  messageCards: [],
-  messageCard1: [],
-  messageCard2: [],
-  messageCard3: []
+  messageCards: []
 }
 
 const getters = {
@@ -62,15 +59,23 @@ const actions = {
     commit('SET_PAGE_MESSAGE')
   },
   async setThreshCard({ commit }, user) {
-    const response = await axios.post(`/v1/user/thresh/${user.id}/get`)
-    if (response.data.data) {
-      commit('SET_THRESH_CARD', { room: response.data.data })
+    if (user) {
+      const response = await axios.post(`/v1/user/thresh/${user.id}/get`)
+      if (response.data.data) {
+        commit('SET_THRESH_CARD', {
+          room: response.data.data,
+          participants: user
+        })
+      } else {
+        commit('SET_THRESH_CARD', {
+          room: {
+            user_with: user
+          },
+          participants: user
+        })
+      }
     } else {
-      commit('SET_THRESH_CARD', {
-        room: {
-          user_with: user
-        }
-      })
+      commit('SET_THRESH_CARD', null)
     }
   }
 }

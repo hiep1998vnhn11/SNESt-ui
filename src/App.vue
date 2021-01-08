@@ -1,7 +1,7 @@
 <template>
   <v-fade-transition>
     <v-app id="inspire">
-      <v-app-bar clipped-left fixed app>
+      <v-app-bar height="56" clipped-left fixed app>
         <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
         <v-switch v-model="$vuetify.theme.dark" inset class="mt-6"></v-switch>
         <v-spacer />
@@ -51,6 +51,7 @@
 
       <v-navigation-drawer
         v-model="drawer"
+        v-if="currentUser"
         clipped
         width="22rem"
         mini-variant-width="5rem"
@@ -74,6 +75,7 @@
                 to="/"
                 icon
                 outlined
+                active-class="primary--text"
               >
                 <v-icon>mdi-home</v-icon>
               </v-btn>
@@ -89,15 +91,18 @@
         />
         <div v-else>
           <v-list nav dense>
+            <!-- Contact Group -->
             <v-list-group :value="true" prepend-icon="mdi-account">
               <template v-slot:activator>
                 <v-list-item-title v-text="$t('Contact')"></v-list-item-title>
               </template>
+
               <v-list-item
                 v-for="friend in friends"
                 :key="`friend-id-${friend.id}`"
                 link
                 two-line
+                @click="onClickFriend(friend.user_friend)"
               >
                 <v-list-item-icon>
                   <v-badge
@@ -124,6 +129,13 @@
                   v-text="friend.user_friend.name"
                 ></v-list-item-title>
               </v-list-item>
+            </v-list-group>
+
+            <!-- Shortcut Group -->
+            <v-list-group :value="false" prepend-icon="mdi-bookmark-multiple">
+              <template v-slot:activator>
+                <v-list-item-title v-text="$t('Shortcuts')"></v-list-item-title>
+              </template>
             </v-list-group>
 
             <v-list-group :value="false" prepend-icon="mdi-account-group">
@@ -201,6 +213,7 @@ export default {
     ...mapActions('user', ['getUser', 'getFriend']),
     ...mapActions('app', ['setMini', 'setDrawer']),
     ...mapActions('socket', ['connectSocket']),
+    ...mapActions('message', ['setThreshCard']),
     async fetchData() {
       this.loading = true
       this.error = null
@@ -216,6 +229,13 @@ export default {
     },
     closeConditional(e) {
       return this.searchSelected
+    },
+    async onClickFriend(user) {
+      try {
+        await this.setThreshCard(user)
+      } catch (err) {
+        console.log(err.response.data.message)
+      }
     }
   }
 }

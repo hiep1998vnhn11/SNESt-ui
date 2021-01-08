@@ -4,13 +4,14 @@
       <router-view :loading="loading" />
     </v-container>
     <div v-if="!$route.name.includes('messages')">
-      <message-card v-if="thresh" :thresh="thresh" :user="user" />
+      <message-card v-if="thresh" />
       <v-btn
-        class="button-navigation white elevation-20"
+        class="button-navigation elevation-20"
         x-large
+        outlined
         icon
         text
-        @click="onOpenMessage({ id: 1 })"
+        @click="onOpenMessage()"
       >
         <v-icon v-text="messageIcon"></v-icon>
       </v-btn>
@@ -34,6 +35,7 @@ export default {
   computed: {
     ...mapGetters('user', ['currentUser']),
     ...mapGetters('socket', ['socket']),
+    ...mapGetters('message', ['thresh']),
     messageIcon() {
       return this.$route.name === 'Home'
         ? 'mdi-pencil-circle-outline'
@@ -45,8 +47,7 @@ export default {
     return {
       loading: false,
       error: null,
-      loadingMessageCard: false,
-      thresh: null
+      loadingMessageCard: false
     }
   },
   methods: {

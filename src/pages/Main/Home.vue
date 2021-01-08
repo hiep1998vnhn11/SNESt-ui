@@ -9,9 +9,9 @@
           :key="post.creadted"
           :post="post"
         ></post-component>
-        <observer @intersect="intersected"></observer>
       </div>
       <div v-else>Not have</div>
+      <observer @intersect="intersected"></observer>
       <v-skeleton-loader
         v-if="loading"
         class="mx-auto mt-3"

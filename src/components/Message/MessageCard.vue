@@ -12,9 +12,8 @@
     v-if="currentUser"
     :loading="loading"
   >
-    {{ thresh }}
     <v-toolbar dense color="elevation-0">
-      <v-btn text large class="ml-n3 text-none" v-if="user">
+      <v-btn text large class="ml-n3 text-none" v-if="thresh.participants">
         <v-badge
           bordered
           bottom
@@ -23,24 +22,27 @@
           offset-x="10"
           offset-y="10"
           class="ml-n9"
-          v-if="user.online_status.status"
+          v-if="thresh.participants.online_status.status"
         >
           <v-avatar size="40" class="avatar-outlined">
-            <v-img :src="user.profile_photo_path"></v-img>
+            <v-img :src="thresh.participants.profile_photo_path"></v-img>
           </v-avatar>
         </v-badge>
         <v-avatar v-else size="40" class="avatar-outlined ml-n9">
-          <v-img :src="user.profile_photo_path"></v-img>
+          <v-img :src="thresh.participants.profile_photo_path"></v-img>
         </v-avatar>
         <v-col class="mb-n1" cols="5">
           <div class="font-weight-bold mb-0">
-            {{ user.name | onlyName }}
+            {{ thresh.participants.name | onlyName }}
           </div>
-          <span class="text-caption" v-if="user.online_status.status">
+          <span
+            class="text-caption"
+            v-if="thresh.participants.online_status.status"
+          >
             Active now
           </span>
           <span class="text-caption" v-else>
-            {{ user.online_status | relativeTime }}
+            {{ thresh.participants.online_status | relativeTime }}
           </span>
         </v-col>
       </v-btn>
@@ -55,7 +57,7 @@
       <v-btn icon small class="mr-2">
         <v-icon :color="selected ? 'primary' : ''">mdi-minus</v-icon>
       </v-btn>
-      <v-btn icon small @click="closeMessageCard(location)">
+      <v-btn icon small @click="setThreshCard(null)">
         <v-icon :color="selected ? 'primary' : ''">mdi-close</v-icon>
       </v-btn>
     </v-toolbar>
@@ -82,22 +84,25 @@
               ? message.user_id !== messages[index + 1].user_id
               : true
           "
-          :user="user"
+          :user="thresh.participants"
         />
       </div>
       <div v-else class="text-center">
         <div>
           <v-avatar class="avatar-outlined" size="100">
-            <img :src="user.profile_photo_path" />
+            <img :src="thresh.participants.profile_photo_path" />
           </v-avatar>
         </div>
         <div class="font-weight-bold text-body-1">
-          {{ user.name }}
+          {{ thresh.participants.name }}
         </div>
         <div class="text-body-2">
           {{ $t('FriendOnMessage') }}
         </div>
-        <div>{{ $t('Write something with') }} {{ user.name | onlyName }}</div>
+        <div>
+          {{ $t('Write something with') }}
+          {{ thresh.participants.name | onlyName }}
+        </div>
       </div>
     </v-card-text>
     <v-card-actions>
@@ -134,7 +139,6 @@
 </template>
 
 <script>
-import Axios from 'axios'
 import { mapGetters, mapActions } from 'vuex'
 import MessageRow from './MessageRow'
 
@@ -142,7 +146,7 @@ export default {
   computed: {
     ...mapGetters('user', ['currentUser']),
     ...mapGetters('socket', ['socket']),
-    ...mapGetters('message', ['thresh']),
+    ...mapGetters('message', ['thresh', 'messages']),
     reverseMessages() {
       return this.messages.slice().reverse()
     }
@@ -150,19 +154,17 @@ export default {
   components: {
     MessageRow
   },
-  props: ['user', 'thresh'],
   data() {
     return {
       text: '',
       selected: false,
       active: true,
       loading: false,
-      error: null,
-      messages: []
+      error: null
     }
   },
   methods: {
-    ...mapActions('message', ['getMessage', 'sendMessage', 'closeMessageCard']),
+    ...mapActions('message', ['getMessage', 'sendMessage', 'setThreshCard']),
     onClickOutsideWithConditional() {
       this.selected = false
     },
@@ -172,18 +174,9 @@ export default {
     async fetchData() {
       this.loading = true
       try {
-        let response = await Axios.get(
-          `/v1/user/thresh/${this.thresh.id}/message/get`,
-          {
-            params: {
-              page: 1,
-              limit: 25
-            }
-          }
-        )
-        this.messages = response.data.data.data
+        await this.getMessage(this.thresh.room.id)
       } catch (err) {
-        console.log(err.response.data.message)
+        this.error = err.response.data.message
       }
       this.loading = false
     },
@@ -195,20 +188,17 @@ export default {
           user_id: this.currentUser.id,
           content: this.text
         }
-        if (this.user.id !== this.currentUser.id) {
+        if (this.thresh.participants.id !== this.currentUser.id) {
           this.socket.emit('sendToUser', {
-            userId: this.user.id,
+            userId: this.thresh.participants.id,
             roomId: this.roomId,
             message: message,
-            userName: this.user.name
+            userName: this.thresh.participants.name
           })
         }
-        this.messages.unshift(message)
+        this.text = ''
         try {
-          await Axios.post(`/v1/user/thresh/${this.roomId}/message/send`, {
-            content: this.text
-          })
-          this.text = ''
+          await this.sendMessage(message)
         } catch (err) {
           this.error = err.response.data.message
         }
