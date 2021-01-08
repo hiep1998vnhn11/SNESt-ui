@@ -15,7 +15,10 @@ import AccountSetting from '@/pages/Setting/Account'
 import PrivacySetting from '@/pages/Setting/Privacy'
 import SecuritySetting from '@/pages/Setting/Security'
 
-import login from '@/pages/login'
+import login from '@/pages/login.vue'
+import loginIndex from '@/pages/login/index.vue'
+import loginIdentify from '@/pages/login/identify'
+
 import messages from '@/pages/messages'
 import messagesNew from '@/pages/messages/new'
 import MessagesRoomId from '@/pages/messages/_room_id'
@@ -30,7 +33,8 @@ import UserUrlImage from '@/pages/user/_url/image'
 
 import postPostId from '@/pages/post/_post_id'
 
-import data from './middleware/data'
+import recover from '@/pages/recover'
+import recoverInitiate from '@/pages/recover/initiate'
 
 Vue.use(Router)
 
@@ -40,8 +44,7 @@ export default new Router({
       path: '/',
       component: Main,
       meta: {
-        requiresAuth: true,
-        middleware: data
+        requiresAuth: true
       },
       children: [
         {
@@ -176,11 +179,37 @@ export default new Router({
     },
     {
       path: '/login',
-      name: 'login',
       component: login,
       meta: {
         requiresVisitor: true
-      }
+      },
+      children: [
+        {
+          path: '/',
+          name: 'login',
+          component: loginIndex
+        },
+        {
+          path: 'identify',
+          name: 'login-identify',
+          component: loginIdentify
+        }
+      ]
+    },
+    {
+      path: '/recover',
+      component: recover,
+      children: [
+        {
+          path: '/',
+          name: 'recover'
+        },
+        {
+          path: 'initiate',
+          name: 'recover-initiate',
+          component: recoverInitiate
+        }
+      ]
     },
     {
       path: '/post/:post_id',

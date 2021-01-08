@@ -267,4 +267,8 @@ export default {
   z-index: 9999;
   transform: translateX(-50%);
 }
+
+.row-divider-vertical {
+  margin: 0 -0.5px;
+}
 </style>

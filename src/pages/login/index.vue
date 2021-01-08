@@ -1,60 +1,70 @@
 <template>
   <v-container>
-    <v-col md="6" offset-md="3">
-      <v-card class="rounded-lg" :loading="loading">
-        <v-container>
-          <v-alert
-            :value="registerSuccess"
-            transition="scale-transition"
-            type="success"
-            height="50"
-          >
-            Register Successfully! Please login
-          </v-alert>
-          <v-alert
-            v-if="error"
-            :value="loginError"
-            transition="scale-transition"
-            type="error"
-            height="50"
-          >
-            {{ error.data.message }}
-          </v-alert>
-          <v-form ref="form" v-model="valid" lazy-validation>
-            <v-text-field
-              v-model="email"
-              :rules="emailRules"
-              :label="$t('Email')"
-              required
-            ></v-text-field>
-            <v-text-field
-              v-model="password"
-              type="password"
-              :rules="passwordRules"
-              :label="$t('Password')"
-              required
-            ></v-text-field>
-            <v-btn
-              color="primary"
-              block
-              class="text-h6 text-capitalize"
-              @click="onLogin"
+    <v-row class="pa-16">
+      <v-col cols="12" md="6" lg="7" sm="12" align-self="center"></v-col>
+      <v-col cols="12" md="6" lg="5" sm="12" class="text-center">
+        <v-card class="rounded-lg" :loading="loading">
+          <v-container>
+            <v-alert
+              :value="registerSuccess"
+              transition="scale-transition"
+              type="success"
+              height="50"
             >
-              {{ $t('common.login') }}
-            </v-btn>
-          </v-form>
-          <v-col class="mb-6" justify="center" no-gutters>
-            {{ $t('common.forgotPassword') }}
-          </v-col>
-          <v-col md="6" offset-md="3">
-            <register-component
-              @success="registerSuccess = true"
-              class="mx-auto"
-            />
-          </v-col>
-        </v-container>
-      </v-card>
-    </v-col>
+              Register Successfully! Please login
+            </v-alert>
+            <v-alert
+              v-if="error"
+              :value="loginError"
+              transition="scale-transition"
+              type="error"
+              height="50"
+            >
+              {{ error.data.message }}
+            </v-alert>
+            <v-form ref="form" v-model="valid" lazy-validation>
+              <v-text-field
+                v-model="email"
+                :rules="emailRules"
+                :label="$t('Email')"
+                required
+                @keyup.enter="onLogin"
+              ></v-text-field>
+              <v-text-field
+                v-model="password"
+                type="password"
+                :rules="passwordRules"
+                :label="$t('Password')"
+                required
+                @keyup.enter="onLogin"
+              ></v-text-field>
+            </v-form>
+          </v-container>
+          <v-row class="mx-auto">
+            <v-col cols="6">
+              <v-btn
+                color="primary"
+                class="text-h6 text-capitalize"
+                block
+                large
+                @click="onLogin"
+              >
+                {{ $t('common.login') }}
+              </v-btn>
+            </v-col>
+            <v-col cols="6">
+              <register-component
+                @success="registerSuccess = true"
+                class="mx-auto"
+              />
+            </v-col>
+            <v-col no-gutters>
+              {{ $t('common.forgotPassword') }}
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
     <v-footer absolute>
       <login-footer></login-footer>
     </v-footer>

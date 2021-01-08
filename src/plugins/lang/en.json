@@ -267,5 +267,19 @@
   "CustomizeYourIntro": "Customize your introduction",
   "Delete this post": "Delete this post",
   "Delete post": "Delete post",
-  "Are you sure to delete this post?": "Are you sure to delete this post?"
+  "Are you sure to delete this post?": "Are you sure to delete this post?",
+  "SearchYourAccount": "Search your account",
+  "ResetYourPassword": "Reset your password",
+  "Next": "Next",
+  "Continue": "Continue",
+  "NotYou?": "Not You?",
+  "ResetReceivePassword": "How do you want to receive the code to reset your password?",
+  "SendViaEmail": "Send code to email",
+  "SendViaSMS": "Send code to SMS",
+  "PleaseEnterYourEmailToSearchAccount": "Please enter your email to search account",
+  "IdentifyYourAccount": "Identify your account",
+  "AccountMatchYourSearch": "Account match your search",
+  "ThisIsMyAccount": "This is my account",
+  "Back": "Back",
+  "PleaseEnterYourCorrectEmail": "Please enter your correct email"
 }
