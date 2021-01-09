@@ -24,7 +24,7 @@
               <v-icon>mdi-arrow-left</v-icon>
             </v-btn>
             <v-spacer />
-            Have an error?
+            {{ $t('Have an error?') }}
             <v-spacer />
             <v-btn icon large class="grey lighten-3" @click="closeError">
               <v-icon>mdi-close</v-icon>
@@ -40,7 +40,7 @@
               <v-icon>mdi-arrow-left</v-icon>
             </v-btn>
             <v-spacer />
-            Contribute to the new version
+            {{ $t('Contribute to the new version') }}
             <v-spacer />
             <v-btn icon large class="grey lighten-3" @click="closeFeedback">
               <v-icon>mdi-close</v-icon>
@@ -51,7 +51,7 @@
         <div v-else>
           <v-card-title class="font-weight-bold">
             <v-spacer />
-            Send a feedback to SNESt
+            {{ $t('Send a feedback to SNESt') }}
             <v-spacer />
             <v-btn icon large class="grey lighten-3" @click="dialog = false">
               <v-icon>mdi-close</v-icon>
@@ -72,9 +72,9 @@
                 <v-icon>mdi-message-alert</v-icon>
               </v-avatar>
               <div class="text-left">
-                Contribute to the new version
+                {{ $t('Contribute to the new version') }}
                 <div class="text-caption">
-                  Contribute to the new version of this application
+                  {{ $t('Contribute to the new version of this application') }}
                 </div>
               </div>
               <v-spacer></v-spacer>
@@ -91,8 +91,10 @@
                 <v-icon>mdi-message-alert</v-icon>
               </v-avatar>
               <div class="text-left">
-                Have an error?
-                <div class="text-caption">Please tell us about this error</div>
+                {{ $t('Have an error?') }}
+                <div class="text-caption">
+                  {{ $t('Please tell us about this error') }}
+                </div>
               </div>
               <v-spacer></v-spacer>
             </v-btn>
@@ -139,13 +141,18 @@
               active-class="blue lighten-3"
               @click="dialog = true"
             >
-              <v-avatar outlined icon size="40" class="avatar-outlined left-15">
+              <v-avatar
+                outlined
+                icon
+                size="40"
+                class="avatar-outlined ml-n3 mr-3"
+              >
                 <v-icon>mdi-message-alert</v-icon>
               </v-avatar>
               <div class="text-left">
-                Send a feedback
+                {{ $t('Send a feedback') }}
                 <div class="text-caption">
-                  contribute to improving this application
+                  {{ $t('Contribute to improving this application') }}
                 </div>
               </div>
               <v-spacer></v-spacer>
@@ -160,7 +167,12 @@
               active-class="blue lighten-3"
               :to="{ name: 'AccountSetting' }"
             >
-              <v-avatar outlined icon size="40" class="avatar-outlined left-15">
+              <v-avatar
+                outlined
+                icon
+                size="40"
+                class="avatar-outlined  ml-n3 mr-3"
+              >
                 <v-icon>mdi-cog</v-icon>
               </v-avatar>
               Setting and privacy
@@ -175,7 +187,12 @@
               active-class="blue lighten-3"
               @click="dialog = true"
             >
-              <v-avatar outlined icon size="40" class="avatar-outlined left-15">
+              <v-avatar
+                outlined
+                icon
+                size="40"
+                class="avatar-outlined  ml-n3 mr-3"
+              >
                 <v-icon>mdi-progress-question</v-icon>
               </v-avatar>
               help and support
@@ -190,10 +207,16 @@
               active-class="blue lighten-3"
               @click="dialog = true"
             >
-              <v-avatar outlined icon size="40" class="avatar-outlined left-15">
+              <v-avatar
+                outlined
+                icon
+                size="40"
+                class="avatar-outlined  ml-n3 mr-3"
+              >
                 <v-icon>mdi-moon-waning-crescent</v-icon>
               </v-avatar>
-              Display <v-spacer></v-spacer>
+              {{ $t('Display') }}
+              <v-spacer></v-spacer>
             </v-btn>
 
             <v-btn
@@ -203,10 +226,15 @@
               block
               @click="onLogout"
             >
-              <v-avatar outlined icon size="40" class="avatar-outlined left-15">
+              <v-avatar
+                outlined
+                icon
+                size="40"
+                class="avatar-outlined ml-n3 mr-3"
+              >
                 <v-icon>mdi-logout</v-icon>
               </v-avatar>
-              Logout
+              {{ $t('Logout') }}
               <v-spacer></v-spacer>
             </v-btn>
           </v-container>

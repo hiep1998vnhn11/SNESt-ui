@@ -281,5 +281,15 @@
   "AccountMatchYourSearch": "Account match your search",
   "ThisIsMyAccount": "This is my account",
   "Back": "Back",
-  "PleaseEnterYourCorrectEmail": "Please enter your correct email"
+  "PleaseEnterYourCorrectEmail": "Please enter your correct email",
+  "Send a feedback to SNESt": "Send a feedback to SNESt",
+  "Contribute to the new version": "Contribute to the new version",
+  "Contribute to the new version of this application": "Contribute to the new version of this application",
+  "Have an error?": "Have an error?",
+  "Please tell us about this error": "Please tell us about this error",
+  "Send a feedback": "Send a feedback",
+  "Contribute to improving this application": "Contribute to improving this application",
+  "Display": "Display",
+  "Logout": "Logout",
+  "Shortcuts": "Shortcuts"
 }
