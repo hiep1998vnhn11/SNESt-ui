@@ -1,22 +1,26 @@
 <template>
-  <v-col md="8" offset-md="2">
-    <post-create :loading="loading_user" class="mt-n12"></post-create>
-
-    <div class="mt-3">
-      <post-component
-        class="mt-3"
-        v-for="post in posts"
-        :key="post.creadted"
-        :post="post"
-      ></post-component>
-    </div>
-    <v-skeleton-loader
-      v-if="loading"
-      class="mx-auto mt-3"
-      type="card"
-    ></v-skeleton-loader>
-    <observer @intersect="intersected"></observer>
-  </v-col>
+  <v-row>
+    <v-col cols="12" md="8">
+      <post-create :loading="loading_user"></post-create>
+      <div class="mt-3" v-if="posts.length">
+        <post-component
+          class="mt-3"
+          v-for="post in posts"
+          :key="post.creadted"
+          :post="post"
+        ></post-component>
+      </div>
+      <observer @intersect="intersected"></observer>
+      <v-skeleton-loader
+        v-if="loading"
+        class="mx-auto mt-3"
+        type="card"
+      ></v-skeleton-loader>
+    </v-col>
+    <v-col cols="12" md="4">
+      card
+    </v-col>
+  </v-row>
 </template>
 
 <script>

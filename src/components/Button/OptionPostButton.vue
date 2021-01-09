@@ -24,9 +24,7 @@
             </v-btn>
           </v-card-title>
           <v-divider />
-          <v-container>
-            Hello
-          </v-container>
+          <v-container> Hello </v-container>
         </div>
 
         <div v-else-if="feedback">
@@ -95,9 +93,7 @@
               </v-avatar>
               <div class="text-left">
                 Have an error?
-                <div class="text-caption">
-                  Please tell us about this error
-                </div>
+                <div class="text-caption">Please tell us about this error</div>
               </div>
               <v-spacer></v-spacer>
             </v-btn>
@@ -125,7 +121,7 @@
               block
               active-class="blue lighten-3"
               :to="{
-                name: 'MainProfile',
+                name: 'user-url',
                 params: { url: post.user.url }
               }"
               v-if="!owned"
@@ -161,9 +157,7 @@
               </v-avatar>
               <div class="text-left">
                 Save this post
-                <div class="text-caption">
-                  Save to your saved post list
-                </div>
+                <div class="text-caption">Save to your saved post list</div>
               </div>
               <v-spacer></v-spacer>
             </v-btn>
@@ -185,9 +179,7 @@
               >
                 <v-icon size="30">mdi-pencil-circle-outline</v-icon>
               </v-avatar>
-              <div class="text-left">
-                See edit history
-              </div>
+              <div class="text-left">See edit history</div>
               <v-spacer />
             </v-btn>
 
@@ -219,7 +211,7 @@
               large
               block
               active-class="blue lighten-3"
-              @click="dialog = true"
+              @click="deleteDialog = true"
               v-if="owned"
             >
               <v-avatar
@@ -230,7 +222,7 @@
               >
                 <v-icon>mdi-trash-can-outline</v-icon>
               </v-avatar>
-              Delete this post
+              {{ $t('Delete this post') }}
               <v-spacer></v-spacer>
             </v-btn>
 
@@ -304,6 +296,31 @@
       @close-dialog="editDialog = false"
       :post="post"
     />
+
+    <v-dialog width="500" v-model="deleteDialog">
+      <v-card>
+        <v-card-title>
+          <v-spacer />
+          {{ $t('Delete post') }}
+          <v-spacer />
+          <v-btn icon class="grey lighten-3" text @click="deleteDialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-container>
+          {{ $t('Are you sure to delete this post?') }}
+        </v-container>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn class="text-capitalize red--text" text @click="onDeletePost">
+            Delete
+          </v-btn>
+          <v-btn class="text-capitalize" text @click="deleteDialog = false">
+            Cancel
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -318,6 +335,7 @@ export default {
   },
   methods: {
     ...mapActions('user', ['getUser']),
+    ...mapActions('post', ['deletePost']),
     onClickOutsideWithConditional() {
       this.expand = false
     },
@@ -331,6 +349,14 @@ export default {
     closeError() {
       this.dialog = false
       this.feedback = false
+    },
+    async onDeletePost() {
+      this.deleteDialog = false
+      try {
+        await this.deletePost(this.post.id)
+      } catch (err) {
+        this.error = err.response.data.message
+      }
     }
   },
   computed: {
@@ -348,7 +374,8 @@ export default {
       dialog: false,
       error: false,
       feedback: false,
-      editDialog: false
+      editDialog: false,
+      deleteDialog: false
     }
   }
 }

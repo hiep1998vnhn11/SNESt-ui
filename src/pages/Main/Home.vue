@@ -1,33 +1,68 @@
 <template>
-  <div>
-    <home-nav :loading="loading"></home-nav>
-    <main-feed :loading_user="loading"></main-feed>
-  </div>
+  <v-row>
+    <v-col cols="10" md="8">
+      <post-create :loading="loading_user"></post-create>
+      <div class="mt-3" v-if="posts.length">
+        <post-component
+          class="mt-3"
+          v-for="post in posts"
+          :key="post.creadted"
+          :post="post"
+        ></post-component>
+      </div>
+      <div v-else>Not have</div>
+      <observer @intersect="intersected"></observer>
+      <v-skeleton-loader
+        v-if="loading"
+        class="mx-auto mt-3"
+        type="card"
+      ></v-skeleton-loader>
+    </v-col>
+    <v-col cols="2" md="4">
+      <v-card class="rounded-lg" outlined>
+        <v-container>
+          {{ $t('Online') }}
+        </v-container>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
-import AppBar from '@/components/Layout/AppBar'
-import LoginFooter from '@/components/Layout/LoginFooter'
+import CreatePost from '@/components/Post/CreatePost'
+import PostComponent from '@/components/Post/PostComponent'
+import Observer from '@/components/Observer'
+
 import { mapActions, mapGetters } from 'vuex'
-import HomeNav from '@/components/Layout/HomeNav'
-import Feed from '@/components/Main/Feed'
 export default {
+  props: ['loading_user'],
   components: {
-    'app-bar': AppBar,
-    'app-footer': LoginFooter,
-    'home-nav': HomeNav,
-    'main-feed': Feed
+    'post-create': CreatePost,
+    'post-component': PostComponent,
+    Observer
   },
-  computed: mapGetters('user', ['currentUser']),
-  props: ['loading'],
+  computed: mapGetters('post', ['posts']),
   data() {
     return {
-      tabs: null,
-      drawer: true
+      loading: false,
+      error: null
     }
   },
   methods: {
-    ...mapActions('user', ['getUser'])
+    ...mapActions('post', ['getPost', 'setFeedPage']),
+    async fetchData() {
+      this.error = null
+      this.loading = true
+      try {
+        await this.getPost()
+      } catch (err) {
+        this.error = err.toString()
+      }
+      this.loading = false
+    },
+    intersected() {
+      this.fetchData()
+    }
   }
 }
 </script>

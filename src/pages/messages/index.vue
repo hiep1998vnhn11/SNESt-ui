@@ -1,6 +1,7 @@
 <template>
   <div>
-    Mainmessage
+    Main messagte
+    <router-view />
   </div>
 </template>
 

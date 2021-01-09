@@ -30,6 +30,8 @@ const actions = {
     state.setHeader()
     const userResponse = await axios.post('/auth/me')
     commit('SET_CURRENT_USER', userResponse.data.data)
+    const friendResponse = await axios.post('/v1/user/friend/get')
+    commit('SET_FRIENDS', friendResponse.data.data)
     commit('SET_ACCESS_TOKEN', token)
   },
   async getUser({ commit, state }) {
@@ -70,9 +72,25 @@ const mutations = {
   },
   DESTROY_TOKEN: function(state) {
     state.token = null
+    state.currentUser = null
+    state.friends = []
   },
   SET_FRIENDS: function(state, friends) {
     state.friends = friends
+  },
+  USER_LOGGED_IN: function(state, userId) {
+    state.friends.forEach(friend => {
+      if (friend.friend_id === userId) {
+        friend.user_friend.online_status.status = true
+      }
+    })
+  },
+  USER_LOGGED_OUT: function(state, userId) {
+    state.friends.forEach(friend => {
+      if (friend.friend_id === userId) {
+        friend.user_friend.online_status.status = false
+      }
+    })
   }
 }
 

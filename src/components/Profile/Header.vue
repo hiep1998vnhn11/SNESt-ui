@@ -5,8 +5,8 @@
       type="image,article ,table-row"
     ></v-skeleton-loader>
     <v-container v-else-if="!!user">
-      <v-card justify="center" class="mx-auto" max-width="800px" height="350px">
-        <v-img class="align-end" width="800px" height="350px" :src="background">
+      <v-card justify="center" class="mx-auto" max-width="100%" height="400">
+        <v-img class="align-end" width="100%" height="400" :src="background">
           <v-row>
             <v-col cols="4">
               <change-background
@@ -110,7 +110,7 @@
           large
           text
           class="text-capitalize mr-2 mt-3"
-          :to="{ name: 'MainProfile' }"
+          :to="{ name: 'user-url' }"
           active-class="primary--text"
           exact
         >
@@ -120,7 +120,7 @@
           large
           text
           class="text-capitalize mr-2 mt-3"
-          :to="{ name: 'AboutProfile' }"
+          :to="{ name: 'user-url-about' }"
           active-class="primary--text"
         >
           {{ $t('profile.About') }}
@@ -129,7 +129,7 @@
           large
           text
           class="text-capitalize mt-3 mr-2"
-          :to="{ name: 'FriendProfile' }"
+          :to="{ name: 'user-url-friend' }"
           active-class="primary--text"
         >
           {{ $t('profile.Friends') }}
@@ -138,11 +138,7 @@
         <button-show-more></button-show-more>
 
         <v-spacer></v-spacer>
-
-        <v-btn v-if="current" outlined class="text-capitalize mt-3 ml-2" text>
-          <v-icon class="mr-2">mdi-pencil</v-icon>
-          {{ $t('profile.EditProfile') }}
-        </v-btn>
+        <edit-profile v-if="current" />
         <v-btn
           :loading="loadingAddFriend"
           :disabled="loadingAddFriend"
@@ -306,9 +302,7 @@
         <v-divider></v-divider>
 
         <v-card-actions>
-          <v-btn block class="blue--text text-capitalize">
-            More
-          </v-btn>
+          <v-btn block class="blue--text text-capitalize"> More </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -445,9 +439,7 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
-        <v-card-text>
-          Are you sure about discard this change?
-        </v-card-text>
+        <v-card-text> Are you sure about discard this change? </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
@@ -474,6 +466,7 @@ import Preview from './Preview'
 import { mapGetters } from 'vuex'
 import axios from 'axios'
 import { VueAvatar } from 'vue-avatar-editor-improved'
+import EditProfile from './EditProfile'
 
 export default {
   props: ['user', 'loading'],
@@ -509,7 +502,8 @@ export default {
     'button-show-more': MoreButton,
     'change-background': ChangeBackground,
     VueAvatar,
-    'avatar-preview': Preview
+    'avatar-preview': Preview,
+    EditProfile
   },
   computed: {
     background() {
@@ -525,7 +519,8 @@ export default {
     displayStory() {
       return true
     },
-    ...mapGetters('user', ['currentUser'])
+    ...mapGetters('user', ['currentUser']),
+    ...mapGetters('socket', ['socket'])
   },
   methods: {
     onRemoveChange() {
@@ -569,9 +564,14 @@ export default {
           user_url: this.user.url,
           relationship: 'friend'
         }
-        await axios.post(url, params)
+        const response = await axios.post(url, params)
         this.addFriendStatus = true
         this.$emit('changed-status-friend-added')
+        this.socket.emit('requestAddFriend', {
+          userId: this.user.id,
+          requestUserId: this.currentUser.id,
+          data: response.data.data
+        })
       } catch (err) {
         this.error = err.toString()
       }
@@ -616,7 +616,7 @@ export default {
     async onCancelFriend() {
       this.loadingAddFriend = true
       try {
-        let url = `/v1/user/friend/${this.user.friend_id}/denied`
+        let url = `/v1/user/friend/${this.user.friend_id}/cancel`
         await axios.post(url)
         this.$emit('changed-status-friend-denied')
       } catch (err) {

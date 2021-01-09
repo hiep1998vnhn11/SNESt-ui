@@ -2,8 +2,8 @@
   <div>
     <router-link
       :to="{
-        name: 'MainProfile',
-        params: { url: user.url },
+        name: 'user-url',
+        params: { url: user.url }
       }"
       class="text-capitalize"
       v-slot="{ href, navigate }"

@@ -18,7 +18,7 @@
         >
           <router-link
             :to="{
-              name: 'MainProfile',
+              name: 'user-url',
               params: { url: friend.user_friend.url }
             }"
           >
@@ -31,7 +31,7 @@
           </router-link>
           <router-link
             :to="{
-              name: 'MainProfile',
+              name: 'user-url',
               params: { url: friend.user_friend.url }
             }"
             style="text-decoration: none; color: black;"

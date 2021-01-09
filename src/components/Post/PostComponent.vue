@@ -2,7 +2,7 @@
   <v-card class="mx-auto rounded-lg">
     <v-list-item>
       <router-link
-        :to="{ name: 'MainProfile', params: { url: post.user.url } }"
+        :to="{ name: 'user-url', params: { url: post.user.url } }"
         v-slot="{ href, navigate }"
       >
         <v-list-item-avatar class="avatar-outlined" color="grey">
@@ -27,7 +27,7 @@
     </v-list-item>
     <v-container>
       {{ post.content }}
-      <v-row v-if="post.images.length">
+      <v-row v-if="post.images.length" class="pa-5">
         <v-img
           class="ma-1"
           width="50%"
@@ -40,9 +40,9 @@
     <v-row>
       <v-tooltip top class="text-body-1 white">
         <template color="grey" v-slot:activator="{ on, attrs }">
-          <v-icon color="primary" v-bind="attrs" v-on="on" class="ml-7"
-            >mdi-heart</v-icon
-          >
+          <v-icon color="primary" v-bind="attrs" v-on="on" class="ml-7">
+            mdi-heart
+          </v-icon>
         </template>
         <v-card max-width="300" class="text-body1">{{ post.likes }}</v-card>
       </v-tooltip>

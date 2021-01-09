@@ -23,7 +23,9 @@ export default {
   methods: {
     ...mapActions('user', ['getUser']),
     async getPost(postId) {
-      let url = this.isLoggedIn ? `/v1/user/post/1/get` : `/v1/guest/post/1/get`
+      let url = this.isLoggedIn
+        ? `/v1/user/post/${postId}/get`
+        : `/v1/guest/post/${postId}/get`
       const response = await axios.get(url)
       this.paramPost = response.data.data
     }

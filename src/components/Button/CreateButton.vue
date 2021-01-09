@@ -5,35 +5,33 @@
         <v-btn
           width="40"
           height="40"
-          @click="expand = true"
           outlined
           icon
           text
-          :class="`ml-2 ${classes} text-capitalize`"
+          :class="`${classes} text-capitalize`"
+          @click="expand = true"
         >
           <v-icon v-bind="attrs" v-on="on">mdi-plus</v-icon>
         </v-btn>
       </template>
       <span>{{ $t('common.create') }}</span>
-      <create-post-dialog
-        @close-dialog="dialog = false"
+      <post-create-dialog
         :dialog="dialog"
-      ></create-post-dialog>
+        @close-dialog="dialog = false"
+      ></post-create-dialog>
     </v-tooltip>
     <div class="show-create-app-bar">
       <v-expand-transition right>
         <v-card
+          v-show="expand"
           v-click-outside="{
             handler: onClickOutsideWithConditional,
-            closeConditional
+            closeConditional,
           }"
-          v-show="expand"
-          width="350"
+          width="21rem"
           class="mx-auto"
         >
-          <v-card-title class="font-weight-bold">
-            Create
-          </v-card-title>
+          <v-card-title class="font-weight-bold"> Create </v-card-title>
           <v-container class="mt-n5">
             <v-btn
               text
@@ -52,9 +50,7 @@
               </v-avatar>
               <div class="text-left font-weight-bold">
                 Post
-                <div class="text-caption">
-                  Create a post to your feed
-                </div>
+                <div class="text-caption">Create a post to your feed</div>
               </div>
               <v-spacer></v-spacer>
             </v-btn>
@@ -114,17 +110,11 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import CreatePostDialog from '@/components/Post/CreatePostDialog'
 export default {
-  components: {
-    CreatePostDialog
-  },
-  methods: {
-    onClickOutsideWithConditional() {
-      this.expand = false
-    },
-    closeConditional(e) {
-      return this.expand
+  data() {
+    return {
+      expand: false,
+      dialog: false
     }
   },
   computed: {
@@ -133,10 +123,12 @@ export default {
     },
     ...mapGetters('user', ['currentUser'])
   },
-  data() {
-    return {
-      expand: false,
-      dialog: false
+  methods: {
+    onClickOutsideWithConditional() {
+      this.expand = false
+    },
+    closeConditional(e) {
+      return this.expand
     }
   }
 }
@@ -145,8 +137,8 @@ export default {
 <style>
 .show-create-app-bar {
   position: absolute;
-  z-index: 100;
-  top: 50px;
-  right: 20px;
+  z-index: 900;
+  left: 0.5rem;
+  top: 12rem;
 }
 </style>

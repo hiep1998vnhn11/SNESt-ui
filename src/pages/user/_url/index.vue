@@ -1,10 +1,6 @@
 <template>
   <v-row>
-    <v-col cols="12" md="5">
-      <base-user-info v-if="!!user && !!currentUser" :user="user" />
-      <base-user-friend v-if="user" :user="user"></base-user-friend>
-    </v-col>
-    <v-col cols="12" md="7">
+    <v-col cols="10" md="8">
       <create-post
         v-if="!!user && !!currentUser && user.id === currentUser.id"
         class="mt-3"
@@ -33,7 +29,7 @@
               class="text-capitalize"
               block
               text
-              :to="{ name: 'MainProfile' }"
+              :to="{ name: 'user-url' }"
               active-class="primary--text"
             >
               <v-icon class="mr-3">mdi-view-list</v-icon>
@@ -48,18 +44,26 @@
           </v-col>
         </v-row>
       </v-card>
-      <post-component
-        class="mt-3"
-        v-for="post in userPost"
-        :key="post.id"
-        :post="post"
-      ></post-component>
+      <div v-if="userPost.length">
+        <post-component
+          class="mt-3"
+          v-for="post in userPost"
+          :key="post.id"
+          :post="post"
+        ></post-component>
+        <observer @intersect="intersected"></observer>
+      </div>
+      <div v-else-if="!loading">not have</div>
       <v-skeleton-loader
         v-if="loading"
         class="mx-auto mt-3"
         type="card"
       ></v-skeleton-loader>
-      <observer @intersect="intersected"></observer>
+    </v-col>
+
+    <v-col cols="2" md="4">
+      <base-user-info v-if="!!user && !!currentUser" :user="user" />
+      <base-user-friend v-if="user" :user="user"></base-user-friend>
     </v-col>
     <v-dialog width="600" v-model="filterDialog">
       <v-card>
@@ -244,6 +248,9 @@ export default {
     onDone() {
       this.filterDialog = false
     }
+  },
+  mounted() {
+    this.fetchData()
   },
   computed: {
     ...mapGetters('post', ['userPost']),

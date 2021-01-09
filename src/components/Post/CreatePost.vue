@@ -1,5 +1,5 @@
 <template>
-  <v-card class="rounded-lg pa-2" outlined tile>
+  <v-card class="rounded-lg pa-2" outlined tile v-if="currentUser">
     <v-skeleton-loader
       v-if="loading"
       type="list-item-avatar, divider, actions"
