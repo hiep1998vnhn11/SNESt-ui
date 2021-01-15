@@ -5,36 +5,7 @@
         <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
         <v-switch v-model="$vuetify.theme.dark" inset class="mt-6"></v-switch>
         <v-spacer />
-        <v-card
-          id="search-card-app-bar"
-          v-click-outside="{
-            handler: onClickOutsideWithConditional,
-            closeConditional
-          }"
-          width="500"
-          :class="`elevation-${searchSelected ? 5 : 0} ml-n4`"
-        >
-          <v-app-bar height="56" class="elevation-0">
-            <v-text-field
-              v-model="searchKey"
-              class="elevation-0 lighten-3 ml-2"
-              rounded
-              hide-details
-              :label="$t('Search')"
-              @focus="searchSelected = true"
-            >
-              <template v-slot:prepend-inner class="mr-n2">
-                <v-icon class="ml-n4">mdi-magnify</v-icon>
-              </template>
-            </v-text-field>
-          </v-app-bar>
-          <v-container v-if="searchSelected">
-            <v-row class="mx-auto font-weight-black">
-              {{ $t('Home.SearchResult') }}
-            </v-row>
-            {{ $t('Home.SearchNoResult') }}
-          </v-container>
-        </v-card>
+        <search-card />
         <v-spacer />
         <v-btn
           v-if="currentUser"
@@ -89,6 +60,26 @@
           v-if="loading"
           type="list-item-avatar, list-item@5, divider, list-item-avatar@3"
         />
+        <!-- Search temblade -->
+        <v-container v-else-if="$route.name.includes('search')">
+          <v-btn
+            v-for="item in searchLink"
+            :key="`search-link-${item.text}`"
+            class="text-capitalize mt-1"
+            large
+            block
+            text
+            active-class="primary--text"
+            :to="{ name: item.name, query: $route.query }"
+          >
+            <v-list-item-icon>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title v-text="item.text"></v-list-item-title>
+          </v-btn>
+        </v-container>
+
+        <!-- Default temblade -->
         <div v-else>
           <v-list nav dense>
             <!-- Contact Group -->
@@ -160,6 +151,8 @@ import MessageButton from '@/components/Button/MessageButton'
 import NotificationButton from '@/components/Button/NotificationButton'
 import SettingButton from '@/components/Button/SettingButton'
 import ShowTabButton from '@/components/Button/ShowTabButton'
+import SearchCard from '@/components/Search/Search'
+
 export default {
   name: 'App',
   components: {
@@ -167,9 +160,11 @@ export default {
     'button-message': MessageButton,
     'button-notification': NotificationButton,
     'button-setting': SettingButton,
-    ShowTabButton
+    ShowTabButton,
+    SearchCard
   },
   data() {
+    const _this = this
     return {
       clipped: false,
       drawer: true,
@@ -186,14 +181,29 @@ export default {
           to: '/inspire'
         }
       ],
+      searchLink: [
+        {
+          icon: 'mdi-dock-top',
+          text: _this.$t('All'),
+          name: 'search-top'
+        },
+        {
+          icon: 'mdi-dock-top',
+          text: _this.$t('Posts'),
+          name: 'search-posts'
+        },
+        {
+          icon: 'mdi-dock-top',
+          text: _this.$t('People'),
+          name: 'search-people'
+        }
+      ],
       miniVariant: false,
       right: true,
       rightDrawer: false,
       title: 'Vuetify.js',
       loading: false,
       error: null,
-      searchKey: '',
-      searchSelected: false,
       mini: false
     }
   },
@@ -223,12 +233,6 @@ export default {
         this.error = err.response.data.message
       }
       this.loading = false
-    },
-    onClickOutsideWithConditional() {
-      this.searchSelected = false
-    },
-    closeConditional(e) {
-      return this.searchSelected
     },
     async onClickFriend(user) {
       try {

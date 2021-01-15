@@ -291,5 +291,10 @@
   "Contribute to improving this application": "Contribute to improving this application",
   "Display": "Display",
   "Logout": "Logout",
-  "Shortcuts": "Shortcuts"
+  "Shortcuts": "Shortcuts",
+  "Home.SearchResult": "Search result",
+  "Home.SearchNoResult": "No result found!",
+  "RecentSearches": "Recent searches",
+  "SearchFor": "Search for",
+  "People": "People"
 }

@@ -23,6 +23,11 @@ import messages from '@/pages/messages'
 import messagesNew from '@/pages/messages/new'
 import MessagesRoomId from '@/pages/messages/_room_id'
 
+import Search from '@/pages/search'
+import SearchTop from '@/pages/search/top'
+import SearchPeople from '@/pages/search/people'
+import SearchPost from '@/pages/search/posts'
+
 import UserUrl from '@/pages/user/_url.vue'
 import UserUrlIndex from '@/pages/user/_url/index.vue'
 import UserUrlAbout from '@/pages/user/_url/about'
@@ -172,6 +177,30 @@ export default new Router({
               path: ':room_id',
               name: 'messages-room_id',
               component: MessagesRoomId
+            }
+          ]
+        },
+        {
+          path: 'search',
+          component: Search,
+          meta: {
+            requiresAuth: true
+          },
+          children: [
+            {
+              path: 'top',
+              name: 'search-top',
+              component: SearchTop
+            },
+            {
+              path: 'people',
+              name: 'search-people',
+              component: SearchPeople
+            },
+            {
+              path: 'posts',
+              name: 'search-posts',
+              component: SearchPost
             }
           ]
         }
