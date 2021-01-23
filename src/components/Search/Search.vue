@@ -40,7 +40,24 @@
 
       <!-- Search result temblade -->
       <div v-else-if="searchResult.length">
-        {{ searchResult }}
+        <v-btn
+          v-for="search in searchResult"
+          :key="`search-result-${search.searchable.id}`"
+          block
+          text
+          exact
+          x-large
+          replace
+          class="text-none font-weight-bold"
+          :to="{ name: 'user-url', params: { url: search.searchable.url } }"
+          @click="onClickSearchResult"
+        >
+          <v-avatar size="40" class="ml-n4 mr-3">
+            <img :src="search.searchable.profile_photo_path" />
+          </v-avatar>
+          {{ search.searchable.name }}
+          <v-spacer />
+        </v-btn>
       </div>
 
       <!-- Search history -->
@@ -48,12 +65,44 @@
         <div class="font-weight-bold text-subtitle-1">
           {{ $t('RecentSearches') }}
         </div>
-        {{ searchHistory }}
+        <v-btn
+          v-for="(search, index) in searchHistory"
+          :key="`search-history-${search}`"
+          block
+          text
+          exact
+          large
+          replace
+          class="text-none"
+          :to="{ name: 'search-top', query: { search_key: search } }"
+          @click="searchKey = search"
+        >
+          <v-avatar class="ml-n4">
+            <v-icon>mdi-magnify</v-icon>
+          </v-avatar>
+          {{ search }}
+          <v-spacer />
+          <v-btn
+            icon
+            small
+            text
+            @click="onDeleteSearchHistory({ index, value: search })"
+          >
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-btn>
       </div>
 
       <!-- Search result -->
       <div v-else>
-        <v-btn large block text class="rounded-lg text-none primary--text">
+        <v-btn
+          large
+          block
+          text
+          class="rounded-lg text-none primary--text"
+          replace
+          :to="{ name: 'search-top', query: { search_key: searchKey } }"
+        >
           <v-btn width="35" height="35" icon class="primary mr-3 ml-n1">
             <v-icon color="white">mdi-magnify</v-icon>
           </v-btn>
@@ -65,7 +114,7 @@
   </v-card>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import axios from 'axios'
 
 export default {
@@ -73,13 +122,13 @@ export default {
     return {
       searchKey: '',
       searchSelected: false,
-      searchHistory: [],
       searchResult: [],
       loading: false,
       error: null
     }
   },
   methods: {
+    ...mapActions('app', ['getSearchHistory', 'deleteSearchHistory']),
     onClickOutsideWithConditional() {
       this.searchSelected = false
     },
@@ -87,31 +136,32 @@ export default {
       return this.searchSelected
     },
     async onFocusSearch() {
-      this.searchSelected = true
-      const localSearchHistoryStorage = window.localStorage.getItem(
-        '_SearchHistory'
-      )
-      if (JSON.parse(localSearchHistoryStorage)) {
-        this.searchHistory = JSON.parse(localSearchHistoryStorage)
-      } else {
-        this.loading = true
-        this.error = null
-        try {
-          const searchHistory = await axios.post('/v1/user/search/history')
-          this.searchHistory = searchHistory.data.data
-          window.localStorage.setItem(
-            '_SearchHistory',
-            JSON.stringify(searchHistory.data.data)
-          )
-        } catch (err) {
-          this.error = err.response.data.message
-        }
-        this.loading = false
+      this.searchSelected = this.loading = true
+      this.error = null
+      try {
+        await this.getSearchHistory()
+      } catch (err) {
+        this.error = err.response ? err.response.data.message : err.toString()
       }
+      this.loading = false
+    },
+    async onDeleteSearchHistory({ index, value }) {
+      this.error = null
+      try {
+        await this.deleteSearchHistory({ index, value })
+      } catch (err) {
+        this.errpr = err.response ? err.response.data.message : err.toString()
+      }
+    },
+    onClickSearchResult() {
+      this.searchSelected = false
+      this.searchKey = ''
+      this.searchResult = []
     }
   },
   computed: {
-    ...mapGetters('user', ['currentUser'])
+    ...mapGetters('user', ['currentUser']),
+    ...mapGetters('app', ['searchHistory'])
   },
   watch: {
     async searchKey(value) {

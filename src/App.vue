@@ -18,6 +18,7 @@
             <img :src="currentUser.profile_photo_path" />
           </v-avatar>
         </v-btn>
+        <button-setting />
       </v-app-bar>
 
       <v-navigation-drawer
@@ -52,7 +53,6 @@
               </v-btn>
               <button-message />
               <button-notification />
-              <button-setting />
             </v-row>
           </v-sheet>
         </template>

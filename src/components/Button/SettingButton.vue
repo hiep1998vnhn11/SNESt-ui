@@ -16,6 +16,180 @@
       </template>
       <span>{{ $t('common.option') }}</span>
     </v-tooltip>
+    <div class="show-setting-app-bar">
+      <v-expand-transition right>
+        <v-card
+          v-show="expand"
+          v-click-outside="{
+            handler: onClickOutsideWithConditional,
+            closeConditional
+          }"
+          width="21rem"
+          class="mx-auto"
+        >
+          <v-container>
+            <v-tabs-items v-model="tab">
+              <v-tab-item value="main">
+                <v-btn
+                  v-if="!!currentUser"
+                  text
+                  class="rounded-md mb-2"
+                  height="75"
+                  block
+                  active-class="primary--text"
+                  :to="{ name: 'user-url', params: { url: currentUser.url } }"
+                >
+                  <v-avatar class="mr-3 avatar-outlined" size="60">
+                    <img :src="currentUser.profile_photo_path" />
+                  </v-avatar>
+                  <div
+                    class="text-left text-capitalize text-h5 font-weight-bold"
+                  >
+                    {{ currentUser.name }}
+                    <div class="text-none text-caption">Go to your profile</div>
+                  </div>
+                  <v-spacer></v-spacer>
+                </v-btn>
+                <v-divider></v-divider>
+                <v-btn
+                  text
+                  class="text-capitalize text-body font-weight-bold rounded-md mt-2 mb-2"
+                  large
+                  block
+                  active-class="blue lighten-3"
+                  @click="dialog = true"
+                >
+                  <v-avatar
+                    outlined
+                    icon
+                    size="40"
+                    class="avatar-outlined ml-n3 mr-3"
+                  >
+                    <v-icon>mdi-message-alert</v-icon>
+                  </v-avatar>
+                  <div class="text-left">
+                    {{ $t('Send a feedback') }}
+                    <div class="text-caption">
+                      {{ $t('Contribute to improving this application') }}
+                    </div>
+                  </div>
+                  <v-spacer></v-spacer>
+                </v-btn>
+
+                <v-btn
+                  text
+                  class="text-capitalize text-body rounded-md mt-2"
+                  large
+                  block
+                  exact
+                  active-class="blue lighten-3"
+                  :to="{ name: 'AccountSetting' }"
+                >
+                  <v-avatar
+                    outlined
+                    icon
+                    size="40"
+                    class="avatar-outlined  ml-n3 mr-3"
+                  >
+                    <v-icon>mdi-cog</v-icon>
+                  </v-avatar>
+                  Setting and privacy
+                  <v-spacer></v-spacer>
+                </v-btn>
+
+                <v-btn
+                  text
+                  class="text-capitalize text-body rounded-md mt-2"
+                  large
+                  block
+                  active-class="blue lighten-3"
+                  @click="dialog = true"
+                >
+                  <v-avatar
+                    outlined
+                    icon
+                    size="40"
+                    class="avatar-outlined  ml-n3 mr-3"
+                  >
+                    <v-icon>mdi-progress-question</v-icon>
+                  </v-avatar>
+                  help and support
+                  <v-spacer></v-spacer>
+                </v-btn>
+
+                <v-btn
+                  text
+                  class="text-capitalize text-body rounded-md mt-2"
+                  large
+                  block
+                  active-class="blue lighten-3"
+                  @click="tab = 'display'"
+                >
+                  <v-avatar
+                    outlined
+                    icon
+                    size="40"
+                    class="avatar-outlined  ml-n3 mr-3"
+                  >
+                    <v-icon>mdi-moon-waning-crescent</v-icon>
+                  </v-avatar>
+                  {{ $t('Display') }}
+                  <v-spacer></v-spacer>
+                </v-btn>
+
+                <v-btn
+                  text
+                  class="text-capitalize text-body rounded-md mt-2"
+                  large
+                  block
+                  @click="onLogout"
+                >
+                  <v-avatar
+                    outlined
+                    icon
+                    size="40"
+                    class="avatar-outlined ml-n3 mr-3"
+                  >
+                    <v-icon>mdi-logout</v-icon>
+                  </v-avatar>
+                  {{ $t('Logout') }}
+                  <v-spacer></v-spacer>
+                </v-btn>
+              </v-tab-item>
+
+              <v-tab-item value="display">
+                <v-toolbar elevation="0" class="font-weight-bold">
+                  <v-btn icon text @click="tab = 'main'">
+                    <v-icon>mdi-arrow-left</v-icon>
+                  </v-btn>
+                  <v-spacer />
+                  {{ $t('Display&Accessibility') }}
+                  <v-spacer />
+                </v-toolbar>
+                <v-row no-gutters>
+                  <v-col cols="2" class="text-center">
+                    <v-icon>mdi-moon-waning-crescent</v-icon>
+                  </v-col>
+                  <v-col cols="10">
+                    <div class="font-weight-bold">
+                      {{ $t('DarkMode') }}
+                    </div>
+                    <div>
+                      {{ $t('Setting.Display.Darkmode') }}
+                    </div>
+                    <v-switch
+                      v-model="s"
+                      inset
+                      :label="`Switch 1: ${s.toString()}`"
+                    ></v-switch>
+                  </v-col>
+                </v-row>
+              </v-tab-item>
+            </v-tabs-items>
+          </v-container>
+        </v-card>
+      </v-expand-transition>
+    </div>
     <v-dialog v-model="dialog" persistent width="600">
       <v-card>
         <div v-if="error">
@@ -102,145 +276,6 @@
         </div>
       </v-card>
     </v-dialog>
-    <div class="show-setting-app-bar">
-      <v-expand-transition right>
-        <v-card
-          v-show="expand"
-          v-click-outside="{
-            handler: onClickOutsideWithConditional,
-            closeConditional
-          }"
-          width="21rem"
-          class="mx-auto"
-        >
-          <v-container>
-            <v-btn
-              v-if="!!currentUser"
-              text
-              class="rounded-md mb-2"
-              height="75"
-              block
-              active-class="primary--text"
-              :to="{ name: 'user-url', params: { url: currentUser.url } }"
-            >
-              <v-avatar class="mr-3 avatar-outlined" size="60">
-                <img :src="currentUser.profile_photo_path" />
-              </v-avatar>
-              <div class="text-left text-capitalize text-h5 font-weight-bold">
-                {{ currentUser.name }}
-                <div class="text-none text-caption">Go to your profile</div>
-              </div>
-              <v-spacer></v-spacer>
-            </v-btn>
-            <v-divider></v-divider>
-            <v-btn
-              text
-              class="text-capitalize text-body font-weight-bold rounded-md mt-2 mb-2"
-              large
-              block
-              active-class="blue lighten-3"
-              @click="dialog = true"
-            >
-              <v-avatar
-                outlined
-                icon
-                size="40"
-                class="avatar-outlined ml-n3 mr-3"
-              >
-                <v-icon>mdi-message-alert</v-icon>
-              </v-avatar>
-              <div class="text-left">
-                {{ $t('Send a feedback') }}
-                <div class="text-caption">
-                  {{ $t('Contribute to improving this application') }}
-                </div>
-              </div>
-              <v-spacer></v-spacer>
-            </v-btn>
-
-            <v-btn
-              text
-              class="text-capitalize text-body rounded-md mt-2"
-              large
-              block
-              exact
-              active-class="blue lighten-3"
-              :to="{ name: 'AccountSetting' }"
-            >
-              <v-avatar
-                outlined
-                icon
-                size="40"
-                class="avatar-outlined  ml-n3 mr-3"
-              >
-                <v-icon>mdi-cog</v-icon>
-              </v-avatar>
-              Setting and privacy
-              <v-spacer></v-spacer>
-            </v-btn>
-
-            <v-btn
-              text
-              class="text-capitalize text-body rounded-md mt-2"
-              large
-              block
-              active-class="blue lighten-3"
-              @click="dialog = true"
-            >
-              <v-avatar
-                outlined
-                icon
-                size="40"
-                class="avatar-outlined  ml-n3 mr-3"
-              >
-                <v-icon>mdi-progress-question</v-icon>
-              </v-avatar>
-              help and support
-              <v-spacer></v-spacer>
-            </v-btn>
-
-            <v-btn
-              text
-              class="text-capitalize text-body rounded-md mt-2"
-              large
-              block
-              active-class="blue lighten-3"
-              @click="dialog = true"
-            >
-              <v-avatar
-                outlined
-                icon
-                size="40"
-                class="avatar-outlined  ml-n3 mr-3"
-              >
-                <v-icon>mdi-moon-waning-crescent</v-icon>
-              </v-avatar>
-              {{ $t('Display') }}
-              <v-spacer></v-spacer>
-            </v-btn>
-
-            <v-btn
-              text
-              class="text-capitalize text-body rounded-md mt-2"
-              large
-              block
-              @click="onLogout"
-            >
-              <v-avatar
-                outlined
-                icon
-                size="40"
-                class="avatar-outlined ml-n3 mr-3"
-              >
-                <v-icon>mdi-logout</v-icon>
-              </v-avatar>
-              {{ $t('Logout') }}
-              <v-spacer></v-spacer>
-            </v-btn>
-          </v-container>
-        </v-card>
-      </v-expand-transition>
-    </div>
   </div>
 </template>
 
@@ -253,7 +288,9 @@ export default {
       expand: false,
       dialog: false,
       error: false,
-      feedback: false
+      feedback: false,
+      tab: 'display',
+      s: false
     }
   },
   computed: {
@@ -290,7 +327,7 @@ export default {
 .show-setting-app-bar {
   position: absolute;
   z-index: 900;
-  left: 0.5rem;
-  top: 10.5rem;
+  right: 0.5rem;
+  top: 3.5rem;
 }
 </style>
