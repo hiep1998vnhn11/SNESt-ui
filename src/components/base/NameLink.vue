@@ -42,7 +42,7 @@
             </v-list-item-title>
             <v-list-item-title>
               <v-icon>mdi-account-circle</v-icon>
-              {{ $t('Infomation') }}
+              {{ $t('Information') }}
             </v-list-item-title>
             <v-list-item-subtitle>
               <span v-if="info.info.live_at && info.info.show_live_at">

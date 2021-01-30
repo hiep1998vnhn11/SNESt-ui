@@ -54,7 +54,7 @@ router.beforeEach((to, from, next) => {
   } else if (to.matched.some(record => record.meta.requiresVisitor)) {
     if (store.getters['user/isLoggedIn']) {
       next({
-        name: 'Main'
+        name: 'Home'
       })
     } else {
       next()

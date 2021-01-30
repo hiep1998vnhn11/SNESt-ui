@@ -4,7 +4,8 @@ const state = {
   drawer: true,
   searchResult: [],
   searchHistory: [],
-  isSetStorage: false
+  isSetStorage: false,
+  trending: []
 }
 
 const getters = {
@@ -12,7 +13,8 @@ const getters = {
   drawer: state => state.drawer,
   searchResult: state => state.searchResult,
   searchHistory: state => state.searchHistory,
-  isSetStorage: state => state.isSetStorage
+  isSetStorage: state => state.isSetStorage,
+  trending: state => state.trending
 }
 
 const actions = {
@@ -52,6 +54,10 @@ const actions = {
   async deleteSearchHistory({ commit }, { key, value }) {
     commit('DELETE_SEARCH_HISTORY', key)
     await axios.delete(`/v1/user/search/${value}/delete`)
+  },
+  async getTrending({ commit }) {
+    const response = await axios.post('/v1/user/search/trending')
+    commit('SET_TRENDING', response.data.data)
   }
 }
 
@@ -76,6 +82,9 @@ const mutations = {
   },
   ADD_SEARCH_HISTORY(state, value) {
     state.searchHistory.unshift(value)
+  },
+  SET_TRENDING(state, trending) {
+    state.trending = trending
   }
 }
 

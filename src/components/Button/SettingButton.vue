@@ -177,11 +177,16 @@
                     <div>
                       {{ $t('Setting.Display.Darkmode') }}
                     </div>
-                    <v-switch
-                      v-model="s"
-                      inset
-                      :label="`Switch 1: ${s.toString()}`"
-                    ></v-switch>
+                    <v-row>
+                      <v-col cols="4" class="text-center">Off</v-col>
+                      <v-col cols="4" class="text-center">
+                        <v-switch
+                          v-model="$vuetify.theme.dark"
+                          inset
+                        ></v-switch>
+                      </v-col>
+                      <v-col cols="4" class="text-center">On</v-col>
+                    </v-row>
                   </v-col>
                 </v-row>
               </v-tab-item>
@@ -289,7 +294,7 @@ export default {
       dialog: false,
       error: false,
       feedback: false,
-      tab: 'display',
+      tab: 'main',
       s: false
     }
   },

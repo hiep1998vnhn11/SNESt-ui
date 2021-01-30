@@ -40,8 +40,8 @@ const actions = {
     commit('SET_CURRENT_USER', response.data.data)
   },
   async logout(context) {
-    if (context.getters.isLoggedIn) {
-      context.state.setHeader()
+    if (context.getters.isLoggedIn && context.rootGetters['socket/socket'].connected) {
+      context.rootGetters['socket/socket'].close()
       await axios.post('/auth/logout')
       Cookies.remove('access_token')
       context.commit('DESTROY_TOKEN')

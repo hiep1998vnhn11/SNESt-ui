@@ -18,7 +18,7 @@
             <img :src="currentUser.profile_photo_path" />
           </v-avatar>
         </v-btn>
-        <button-setting />
+        <button-setting v-if="currentUser" />
       </v-app-bar>
 
       <v-navigation-drawer
@@ -208,7 +208,7 @@ export default {
     }
   },
   mounted() {
-    if (!this.friends.length) this.fetchData()
+    if (this.isloggedIn && !this.friends.length) this.fetchData()
   },
   computed: {
     ...mapGetters('user', ['currentUser', 'friends', 'isLoggedIn']),
@@ -247,7 +247,7 @@ export default {
 
 <style>
 #inspire {
-  font-family: 'Times New Roman', Times, serif;
+  font-family: 'Nunito', Times, serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
